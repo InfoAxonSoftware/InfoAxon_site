@@ -1,0 +1,304 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* ---- Light theme (default) ---- */
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #ffffff;
+    color: #0f172a;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* ---- Dark theme ---- */
+  .dark body {
+    background-color: #020617;
+    color: #f8fafc;
+  }
+
+  /* Scrollbar – light */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+  .dark ::-webkit-scrollbar-track { background: #0f172a; }
+  .dark ::-webkit-scrollbar-thumb { background: #334155; }
+  .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+}
+
+@layer components {
+
+  /* ========== Gradient helpers ========== */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 via-primary-600 to-accent-cyan;
+  }
+  .dark .gradient-text {
+    @apply from-primary-400 via-primary-500 to-accent-cyan;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-r from-primary-600 to-accent-cyan;
+  }
+
+  /* ========== Glass card ========== */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-xl border border-dark-200/60 rounded-2xl shadow-sm;
+  }
+  .dark .glass-card {
+    @apply bg-dark-900/60 border-dark-700/50 shadow-none;
+  }
+
+  .glass-card-hover {
+    @apply glass-card
+           hover:border-primary-400/40 hover:shadow-md hover:shadow-primary-500/5
+           transition-all duration-500;
+  }
+  .dark .glass-card-hover {
+    @apply hover:bg-dark-800/60 hover:shadow-none;
+  }
+
+  /* ========== Layout ========== */
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28;
+  }
+
+  /* ========== Typography ========== */
+  .section-title {
+    @apply text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-dark-900;
+  }
+  .dark .section-title {
+    @apply text-white;
+  }
+
+  .section-subtitle {
+    @apply text-sm sm:text-base font-semibold tracking-widest uppercase text-primary-600;
+  }
+  .dark .section-subtitle {
+    @apply text-primary-400;
+  }
+
+  .section-description {
+    @apply text-base sm:text-lg text-dark-500 leading-relaxed max-w-3xl;
+  }
+  .dark .section-description {
+    @apply text-dark-300;
+  }
+
+  /* ========== Buttons ========== */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-white
+           gradient-bg hover:shadow-lg hover:shadow-primary-500/25
+           transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 ease-bounce-in;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold
+           border border-dark-200 text-dark-600 hover:border-primary-500 hover:text-primary-600
+           transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 ease-bounce-in;
+  }
+  .dark .btn-secondary {
+    @apply border-dark-600 text-dark-200 hover:text-white;
+  }
+
+  /* ========== Nav links ========== */
+  .nav-link {
+    @apply relative text-dark-500 hover:text-dark-900 transition-colors duration-300
+           after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5
+           after:bg-primary-500 after:transition-all after:duration-300
+           hover:after:w-full;
+  }
+  .dark .nav-link {
+    @apply text-dark-300 hover:text-white;
+  }
+
+  .nav-link-active {
+    @apply text-dark-900 after:w-full;
+  }
+  .dark .nav-link-active {
+    @apply text-white;
+  }
+
+  /* ========== Card effects ========== */
+  .card-shine {
+    @apply relative overflow-hidden;
+  }
+  .card-shine::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-full
+           bg-gradient-to-r from-transparent via-white/10 to-transparent
+           -translate-x-full;
+    transition: transform 0.7s ease;
+  }
+  .card-shine:hover::before {
+    @apply translate-x-full;
+  }
+
+  .floating-element {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .glow-border {
+    @apply border border-primary-500/20 shadow-lg shadow-primary-500/10;
+  }
+
+  /* ========== Theme-aware text helpers ========== */
+  .text-heading {
+    @apply text-dark-900;
+  }
+  .dark .text-heading {
+    @apply text-white;
+  }
+
+  .text-body {
+    @apply text-dark-600;
+  }
+  .dark .text-body {
+    @apply text-dark-300;
+  }
+
+  .text-muted {
+    @apply text-dark-400;
+  }
+  .dark .text-muted {
+    @apply text-dark-500;
+  }
+
+  /* ========== Theme-aware backgrounds ========== */
+  .bg-page {
+    @apply bg-white;
+  }
+  .dark .bg-page {
+    @apply bg-dark-950;
+  }
+
+  .bg-page-alt {
+    @apply bg-dark-50/50;
+  }
+  .dark .bg-page-alt {
+    @apply bg-dark-900/30;
+  }
+
+  .bg-hero {
+    @apply bg-gradient-to-b from-dark-50 to-white;
+  }
+  .dark .bg-hero {
+    @apply bg-none bg-dark-950;
+  }
+
+  /* ========== Borders ========== */
+  .border-themed {
+    @apply border-dark-200/60;
+  }
+  .dark .border-themed {
+    @apply border-dark-800/50;
+  }
+
+  /* ========== Pills, tags ========== */
+  .pill {
+    @apply px-4 py-2 rounded-full bg-primary-50 border border-primary-200 text-primary-700 text-sm font-medium;
+  }
+  .dark .pill {
+    @apply bg-primary-500/10 border-primary-500/20 text-primary-400;
+  }
+
+  .tech-tag {
+    @apply px-3 py-1 rounded-full bg-dark-100 border border-dark-200 text-dark-600 text-xs font-medium;
+  }
+  .dark .tech-tag {
+    @apply bg-dark-800 border-dark-700 text-dark-300;
+  }
+
+  .result-dot {
+    @apply w-1.5 h-1.5 rounded-full bg-green-500;
+  }
+
+  /* ========== Filter button ========== */
+  .filter-btn {
+    @apply px-6 py-2.5 rounded-full text-sm font-medium
+           bg-dark-100 border border-dark-200 text-dark-500
+           hover:border-primary-400 hover:text-primary-600 transition-all duration-300;
+  }
+  .dark .filter-btn {
+    @apply bg-dark-800 border-dark-700 text-dark-300 hover:border-primary-500/30 hover:text-white;
+  }
+
+  .filter-btn-active {
+    @apply gradient-bg text-white border-transparent shadow-lg shadow-primary-500/25;
+  }
+
+  /* ========== Social icon ========== */
+  .social-icon {
+    @apply w-10 h-10 rounded-lg bg-dark-100 border border-dark-200 flex items-center justify-center
+           text-dark-400 hover:text-primary-600 hover:border-primary-500 hover:bg-primary-50
+           transition-all duration-300;
+  }
+  .dark .social-icon {
+    @apply bg-dark-800 border-dark-700 hover:text-white hover:bg-primary-500/10;
+  }
+
+  /* ========== Contact icon box ========== */
+  .contact-icon-box {
+    @apply w-12 h-12 rounded-xl bg-primary-50 border border-primary-100 flex items-center justify-center flex-shrink-0;
+  }
+  .dark .contact-icon-box {
+    @apply bg-primary-500/10 border-primary-500/20;
+  }
+
+  /* ========== Admin (stays dark always) ========== */
+  .admin-card {
+    @apply bg-dark-800 border border-dark-700 rounded-xl p-6;
+  }
+
+  .admin-input {
+    @apply w-full bg-dark-900 border border-dark-700 rounded-lg px-4 py-3 text-white
+           placeholder-dark-500 focus:outline-none focus:border-primary-500 focus:ring-1
+           focus:ring-primary-500 transition-colors duration-200;
+  }
+
+  .admin-textarea {
+    @apply admin-input resize-none;
+  }
+
+  .admin-btn-primary {
+    @apply px-6 py-2.5 rounded-lg font-medium text-white gradient-bg
+           hover:shadow-lg hover:shadow-primary-500/25 transition-all duration-300;
+  }
+
+  .admin-btn-danger {
+    @apply px-6 py-2.5 rounded-lg font-medium text-white bg-red-600
+           hover:bg-red-700 transition-all duration-300;
+  }
+
+  .admin-btn-secondary {
+    @apply px-6 py-2.5 rounded-lg font-medium text-dark-300 border border-dark-700
+           hover:border-dark-500 hover:text-white transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-700 { animation-delay: 700ms; }
+  .animate-delay-1000 { animation-delay: 1000ms; }
+}
