@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { pricingSolutions } from '../data/pricingData';
 
@@ -37,7 +37,7 @@ export default function PricingDetail() {
       {/* Package Cards */}
       <section className="pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {sol.plans.map((plan, i) => (
               <motion.div
                 key={plan.name}
@@ -46,7 +46,7 @@ export default function PricingDetail() {
                 transition={{ delay: 0.1 + i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                 className={`relative flex flex-col rounded-2xl border overflow-hidden transition-all duration-300
                   ${plan.badge
-                    ? `${sol.colorBorder} shadow-xl md:-mt-3 md:mb-3`
+                    ? `${sol.colorBorder} shadow-xl lg:-mt-3 lg:mb-3`
                     : 'border-dark-200/70 dark:border-dark-700/50 hover:shadow-md'
                   } bg-white dark:bg-dark-900`}
               >
@@ -63,7 +63,12 @@ export default function PricingDetail() {
                 <div className={`p-7 flex flex-col gap-5 flex-1 ${plan.badge ? 'pt-10' : ''}`}>
 
                   {/* Plan name */}
-                  <div className="font-bold text-dark-900 dark:text-white text-xl">{plan.name}</div>
+                  <div>
+                    <div className="font-bold text-dark-900 dark:text-white text-xl">{plan.name}</div>
+                    {plan.description && (
+                      <p className="text-dark-500 dark:text-dark-400 text-sm leading-relaxed mt-2">{plan.description}</p>
+                    )}
+                  </div>
 
                   {/* Price block */}
                   <div className="border-t border-dark-100 dark:border-dark-800 pt-5">
@@ -77,21 +82,74 @@ export default function PricingDetail() {
                         {"Let's Talk"}
                       </div>
                     )}
-                    <div className="text-xs text-dark-400 dark:text-dark-500 mt-2">Est. {plan.delivery}</div>
+                    {plan.delivery && (
+                      <div className="text-xs text-dark-400 dark:text-dark-500 mt-2">Est. {plan.delivery}</div>
+                    )}
                   </div>
 
-                  {/* Features */}
-                  <ul className="space-y-2.5 flex-1">
-                    {plan.features.map((f, j) => (
-                      <li key={j} className="flex items-start gap-3">
-                        <span className={`w-1.5 h-1.5 rounded-full bg-gradient-to-br ${sol.color} flex-shrink-0 mt-[7px]`} />
-                        <span className="text-dark-600 dark:text-dark-300 text-sm leading-snug">{f}</span>
+                  {/* Key features */}
+                  <ul className="space-y-2.5">
+                    {(plan.keyFeatures || plan.features).map((feature) => (
+                      <li key={feature} className="flex items-start gap-3">
+                        <span className={'w-1.5 h-1.5 rounded-full bg-gradient-to-br flex-shrink-0 mt-[7px] ' + sol.color} />
+                        <span className="text-dark-600 dark:text-dark-300 text-sm leading-snug">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
+                  {plan.supportPeriod && (
+                    <div className="rounded-xl border border-primary-200/70 bg-primary-50/70 px-4 py-3 dark:border-primary-500/20 dark:bg-primary-500/5">
+                      <div className="text-[10px] font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400">
+                        Support period
+                      </div>
+                      <div className="mt-1 text-sm font-semibold text-dark-800 dark:text-dark-100">
+                        {plan.supportPeriod}
+                      </div>
+                    </div>
+                  )}
+
+                  {plan.keyFeatures && (
+                    <details className="group rounded-xl border border-dark-200/70 bg-dark-50/50 dark:border-dark-700/50 dark:bg-dark-800/30">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-primary-600 dark:text-primary-400">
+                        <span>View full features</span>
+                        <span className="text-lg leading-none transition-transform group-open:rotate-45">+</span>
+                      </summary>
+                      <div className="space-y-4 border-t border-dark-200/60 px-4 py-4 dark:border-dark-700/50">
+                        <ul className="space-y-2">
+                          {plan.features.map((feature) => (
+                            <li key={feature} className="flex items-start gap-2 text-xs leading-relaxed text-dark-600 dark:text-dark-400">
+                              <span className="text-primary-500 flex-shrink-0">•</span>
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        {plan.optionalAddOns?.length > 0 && (
+                          <div>
+                            <div className="mb-2 text-xs font-bold uppercase tracking-wide text-cyan-700 dark:text-cyan-400">
+                              Optional add-ons
+                            </div>
+                            <ul className="space-y-2">
+                              {plan.optionalAddOns.map((item) => (
+                                <li key={item} className="text-xs leading-relaxed text-dark-600 dark:text-dark-400">
+                                  + {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {plan.note && (
+                          <p className="rounded-lg bg-primary-50 p-3 text-xs font-medium text-primary-700 dark:bg-primary-500/5 dark:text-primary-300">
+                            {plan.note}
+                          </p>
+                        )}
+                      </div>
+                    </details>
+                  )}
                   {/* CTA */}
-                  <Link to="/contact" className={`${plan.ctaStyle} w-full justify-center mt-2`}>
+                  <Link
+                    to={plan.id ? `/contact?service=${sol.id}&plan=${plan.id}` : '/contact'}
+                    className={`${plan.ctaStyle} w-full justify-center mt-2`}
+                  >
                     {plan.cta}
                   </Link>
                 </div>

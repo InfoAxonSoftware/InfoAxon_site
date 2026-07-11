@@ -38,91 +38,110 @@ export default function ServicesPreview() {
           </p>
         </motion.div>
 
-        {/* Table — pencil sketch style */}
+        {/* Desktop comparison columns */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          style={{ borderLeft: '1.5px solid rgba(100,100,120,0.35)', borderRight: '1.5px solid rgba(100,100,120,0.35)' }}
+          className="hidden lg:grid lg:grid-cols-5 border-y border-dark-200/70 dark:border-dark-700/50 bg-white dark:bg-dark-950"
         >
-          {/* Header row — no top border */}
-          <div className="grid grid-cols-1 sm:grid-cols-5" style={{ borderBottom: '1.5px solid rgba(100,100,120,0.35)' }}>
-            {solutions.map((solution, i) => {
-              const s = colStyles[i] || colStyles[0];
-              return (
-                <motion.div
-                  key={solution.id}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: 0.06 * i, duration: 0.45 }}
-                  className="relative"
-                  style={i < solutions.length - 1 ? { borderRight: '1.5px solid rgba(100,100,120,0.35)' } : {}}
-                >
-                  <div className="px-8 py-5 bg-white dark:bg-dark-950">
-                    <div className={`text-base font-bold leading-snug ${s.label}`}>
-                      {solution.shortTitle || solution.title}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+          {solutions.map((solution, i) => {
+            const s = colStyles[i] || colStyles[0];
 
-          {/* Feature rows */}
-          {Array.from({ length: Math.max(...solutions.map(s => s.features.length)) }).map((_, rowIdx) => (
-            <div
-              key={rowIdx}
-              className={`grid grid-cols-1 sm:grid-cols-5 ${rowIdx % 2 === 0 ? 'bg-dark-50/50 dark:bg-dark-900/50' : 'bg-white dark:bg-dark-950'}`}
-              style={{ borderBottom: '1px dashed rgba(100,100,120,0.25)' }}
-            >
-              {solutions.map((solution, colIdx) => {
-                const s = colStyles[colIdx] || colStyles[0];
-                const feat = solution.features[rowIdx];
-                return (
-                  <motion.div
-                    key={solution.id}
-                    initial={{ opacity: 0 }}
-                    animate={inView ? { opacity: 1 } : {}}
-                    transition={{ delay: 0.15 + rowIdx * 0.04 + colIdx * 0.02 }}
-                    className="px-8 py-3.5"
-                    style={colIdx < solutions.length - 1 ? { borderRight: '1px dashed rgba(100,100,120,0.25)' } : {}}
-                  >
-                    {feat ? (
-                      <div className="flex items-start gap-3">
-                        <span className={`w-1.5 h-1.5 rounded-full ${s.dot} flex-shrink-0 mt-[6px]`} />
-                        <span className="text-sm text-dark-600 dark:text-dark-300 leading-snug">{feat}</span>
-                      </div>
-                    ) : (
-                      <span className="block w-5 h-px bg-dark-300/30 dark:bg-dark-600/30 mt-2" />
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div>
-          ))}
+            return (
+              <motion.article
+                key={solution.id}
+                initial={{ opacity: 0, y: 18 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.12 + i * 0.06, duration: 0.45 }}
+                className={'relative min-w-0 flex h-full flex-col px-5 py-6 xl:px-6 ' + (
+                  i < solutions.length - 1
+                    ? 'border-r border-dark-200/70 dark:border-dark-700/50'
+                    : ''
+                )}
+              >
+                <div className={'absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ' + s.bar} />
 
-          {/* Footer row — no bottom border */}
-          <div className="grid grid-cols-1 sm:grid-cols-5 bg-white dark:bg-dark-950" style={{ borderTop: '1.5px solid rgba(100,100,120,0.35)' }}>
-            {solutions.map((solution, i) => {
-              const s = colStyles[i] || colStyles[0];
-              return (
-                <div
-                  key={solution.id}
-                  style={i < solutions.length - 1 ? { borderRight: '1.5px solid rgba(100,100,120,0.35)' } : {}}
+                <h3 className={'min-h-[3rem] break-words text-base font-bold leading-snug ' + s.label}>
+                  {solution.shortTitle || solution.title}
+                </h3>
+
+                <ul className="mt-5 flex-1 space-y-3.5">
+                  {(solution.features || []).map((feature) => (
+                    <li key={feature} className="flex min-w-0 items-start gap-2.5">
+                      <span className={'mt-[6px] h-1.5 w-1.5 flex-shrink-0 rounded-full ' + s.dot} />
+                      <span className="min-w-0 break-words text-sm leading-snug text-dark-600 dark:text-dark-300">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  to={'/solutions/' + solution.id}
+                  className={'group mt-6 flex items-center justify-between gap-2 border-t border-dark-200/60 pt-4 text-sm font-semibold dark:border-dark-700/50 ' + s.label}
                 >
-                  <Link
-                    to={`/solutions/${solution.id}`}
-                    className={`flex items-center justify-between px-8 py-4 text-sm font-semibold ${s.label} group hover:opacity-80 transition-opacity duration-150`}
-                  >
-                    <span className="underline underline-offset-4 decoration-current/40 group-hover:decoration-current transition-all duration-150">
-                      View solution
-                    </span>
-                    <span className="group-hover:translate-x-1 transition-transform duration-150">&rarr;</span>
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
+                  <span className="underline decoration-current/40 underline-offset-4 transition-all group-hover:decoration-current">
+                    View solution
+                  </span>
+                  <span className="flex-shrink-0 transition-transform duration-150 group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </Link>
+              </motion.article>
+            );
+          })}
+        </motion.div>
+
+        {/* Mobile and tablet cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:hidden"
+        >
+          {solutions.map((solution, i) => {
+            const s = colStyles[i] || colStyles[0];
+
+            return (
+              <motion.article
+                key={solution.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.08 + i * 0.06, duration: 0.45 }}
+                className="relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-dark-200/70 bg-white p-5 dark:border-dark-700/50 dark:bg-dark-950"
+              >
+                <div className={'absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ' + s.bar} />
+
+                <h3 className={'break-words text-lg font-bold leading-snug ' + s.label}>
+                  {solution.shortTitle || solution.title}
+                </h3>
+
+                <ul className="mt-4 flex-1 space-y-3">
+                  {(solution.features || []).map((feature) => (
+                    <li key={feature} className="flex min-w-0 items-start gap-3">
+                      <span className={'mt-[6px] h-1.5 w-1.5 flex-shrink-0 rounded-full ' + s.dot} />
+                      <span className="min-w-0 break-words text-sm leading-snug text-dark-600 dark:text-dark-300">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  to={'/solutions/' + solution.id}
+                  className={'group mt-5 flex items-center justify-between gap-3 border-t border-dark-200/60 pt-4 text-sm font-semibold dark:border-dark-700/50 ' + s.label}
+                >
+                  <span className="underline decoration-current/40 underline-offset-4 transition-all group-hover:decoration-current">
+                    View solution
+                  </span>
+                  <span className="flex-shrink-0 transition-transform duration-150 group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </Link>
+              </motion.article>
+            );
+          })}
         </motion.div>
       </div>
     </section>

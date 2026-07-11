@@ -1,16 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { HiMenuAlt3, HiX, HiChevronDown } from 'react-icons/hi';
+import { HiMenuAlt3, HiX, HiChevronDown, HiShoppingCart } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import { useData } from '../context/DataContext';
+import CompanyLogo from './CompanyLogo';
+import { useHardwareCart } from '../context/HardwareCartContext';
 
 const navLinks = [
   { path: '/', label: 'Home' },
   { path: '/about', label: 'About' },
+  { path: '/build-your-pos', label: 'Build Your POS' },
   { path: '/projects', label: 'Projects' },
-  { path: '/contact', label: 'Contact' },
-];
+  { path: '/contact', label: 'Contact' },];
 
 function ThemeToggle() {
   const { isDark, toggleTheme } = useTheme();
@@ -71,6 +73,9 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
   const location = useLocation();
   const { solutions } = useData();
+  const { itemCount, purchaseType, selectedPlanId } = useHardwareCart();
+  const cartCount =
+    itemCount + (purchaseType !== 'hardware' && selectedPlanId ? 1 : 0);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -94,18 +99,16 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center font-bold text-white text-lg group-hover:shadow-lg group-hover:shadow-primary-500/30 transition-shadow duration-300">
-              IA
-            </div>
+          <Link to="/" aria-label="InfoAxon home" className="flex items-center gap-3 group">
+            <CompanyLogo className="h-9 sm:h-10 lg:h-11 w-auto" loading="eager" />
             <span className="text-xl font-bold text-dark-900 dark:text-white">
               Info<span className="gradient-text">Axon</span>
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.slice(0, 2).map((link) => (
+          <div className="hidden lg:flex items-center gap-5 xl:gap-8">
+            {navLinks.slice(0, 3).map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
@@ -157,7 +160,7 @@ export default function Navbar() {
               </AnimatePresence>
             </div>
 
-            {navLinks.slice(2).map((link) => (
+            {navLinks.slice(3).map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
@@ -170,15 +173,37 @@ export default function Navbar() {
               </NavLink>
             ))}
             <ThemeToggle />
-            <Link to="/contact" className="btn-primary text-sm py-2.5 px-6">
+            <Link
+              to="/pos-hardware/cart"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-dark-100 text-dark-600 transition-colors hover:text-primary-600 dark:bg-dark-800 dark:text-dark-300 dark:hover:text-primary-400"
+              aria-label={'Open POS cart with ' + cartCount + ' items'}
+            >
+              <HiShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -right-1.5 -top-1.5 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-primary-600 px-1 text-[10px] font-bold text-white">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>            <Link to="/contact" className="btn-primary whitespace-nowrap text-sm py-2.5 px-4 xl:px-6">
               Get Started
             </Link>
           </div>
 
           {/* Mobile Toggle */}
-          <div className="flex items-center gap-3 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <ThemeToggle />
-            <button
+            <Link
+              to="/pos-hardware/cart"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-dark-100 text-dark-600 dark:bg-dark-800 dark:text-dark-300"
+              aria-label={'Open POS cart with ' + cartCount + ' items'}
+            >
+              <HiShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-primary-600 px-1 text-[10px] font-bold text-white">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>            <button
               className="text-dark-900 dark:text-white p-2"
               onClick={() => setIsMobileOpen(!isMobileOpen)}
               aria-label="Toggle menu"
@@ -196,10 +221,10 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white/95 dark:bg-dark-950/95 backdrop-blur-xl border-b border-dark-200 dark:border-dark-800"
+            className="lg:hidden bg-white/95 dark:bg-dark-950/95 backdrop-blur-xl border-b border-dark-200 dark:border-dark-800"
           >
             <div className="px-4 py-6 space-y-1">
-              {navLinks.slice(0, 2).map((link) => (
+              {navLinks.slice(0, 3).map((link) => (
                 <NavLink
                   key={link.path}
                   to={link.path}
@@ -240,7 +265,7 @@ export default function Navbar() {
                 )}
               </div>
 
-              {navLinks.slice(2).map((link) => (
+              {navLinks.slice(3).map((link) => (
                 <NavLink
                   key={link.path}
                   to={link.path}

@@ -3,12 +3,15 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { HiLockClosed } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import CompanyLogo from '../components/CompanyLogo';
 
 export default function AdminLogin() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, loading, login } = useAuth();
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
+
+  if (loading) return <div className="min-h-screen bg-dark-950 grid place-items-center text-dark-300">Verifying session…</div>;
 
   if (isAuthenticated) {
     return <Navigate to="/admin" replace />;
@@ -20,7 +23,7 @@ export default function AdminLogin() {
 
     // Small delay for UX
     await new Promise((r) => setTimeout(r, 500));
-    const result = login(credentials.username, credentials.password);
+    const result = await login(credentials.username, credentials.password);
 
     if (result.success) {
       toast.success('Welcome back, Admin!');
@@ -42,9 +45,7 @@ export default function AdminLogin() {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl gradient-bg mx-auto flex items-center justify-center text-white text-2xl font-bold mb-4">
-            IA
-          </div>
+          <CompanyLogo className="h-20 max-w-full w-auto mx-auto mb-4" loading="eager" />
           <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
           <p className="text-dark-400 mt-2">Sign in to manage your website content</p>
         </div>
@@ -94,10 +95,6 @@ export default function AdminLogin() {
               </>
             )}
           </button>
-
-          <div className="text-center text-dark-500 text-xs mt-4">
-            Default: admin / infoaxon2024
-          </div>
         </form>
       </div>
     </div>

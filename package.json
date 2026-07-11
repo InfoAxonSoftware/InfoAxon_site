@@ -7,29 +7,46 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "server": "node server/server.js",
-    "dev:all": "concurrently \"npm run dev\" \"npm run server\""
+    "server": "nodemon server/index.js",
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "server:prod": "node server/index.js",
+    "prisma:generate": "prisma generate --schema server/prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema server/prisma/schema.prisma",
+    "prisma:seed": "prisma db seed --schema server/prisma/schema.prisma"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "axios": "^1.7.2",
+    "dotenv": "^17.4.2",
+    "express-rate-limit": "^8.5.2",
+    "framer-motion": "^11.2.10",
+    "helmet": "^8.2.0",
+    "morgan": "^1.11.0",
+    "multer": "^2.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.23.1",
-    "framer-motion": "^11.2.10",
+    "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
-    "axios": "^1.7.2",
     "react-intersection-observer": "^9.10.3",
-    "react-hot-toast": "^2.4.1"
+    "react-router-dom": "^6.23.1",
+    "slugify": "^1.6.9",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.3.1",
-    "tailwindcss": "^3.4.4",
-    "postcss": "^8.4.38",
     "autoprefixer": "^10.4.19",
-    "concurrently": "^8.2.2",
-    "express": "^4.19.2",
-    "cors": "^2.8.5",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2"
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.6",
+    "express": "^4.22.2",
+    "jsonwebtoken": "^9.0.3",
+    "nodemon": "^3.1.14",
+    "postcss": "^8.4.38",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^3.4.4",
+    "vite": "^5.3.1"
+  },
+  "prisma": {
+    "seed": "node server/prisma/seed.js"
   }
 }

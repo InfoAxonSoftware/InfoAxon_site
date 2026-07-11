@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { FaFacebookF, FaLinkedinIn, FaInstagram, FaTwitter } from 'react-icons/fa';
 import { HiMail, HiPhone, HiLocationMarker } from 'react-icons/hi';
 import { useData } from '../context/DataContext';
+import CompanyLogo from './CompanyLogo';
 
 const quickLinks = [
   { label: 'About Us', path: '/about' },
@@ -20,10 +21,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center font-bold text-white text-lg">
-                IA
-              </div>
+            <Link to="/" aria-label="InfoAxon home" className="flex items-center gap-3 mb-6">
+              <CompanyLogo className="h-12 w-auto" loading="lazy" />
               <span className="text-xl font-bold text-dark-900 dark:text-white">
                 Info<span className="gradient-text">Axon</span>
               </span>

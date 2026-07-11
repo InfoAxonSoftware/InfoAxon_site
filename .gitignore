@@ -6,6 +6,7 @@ dist/
 
 # Local env files
 .env
+
 .env.local
 .env.*.local
 
@@ -24,3 +25,7 @@ Thumbs.db
 # IDE/editor files
 .vscode/
 .idea/
+
+server/.env
+server/uploads/*
+!server/uploads/.gitkeep

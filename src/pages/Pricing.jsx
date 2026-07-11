@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { pricingSolutions } from '../data/pricingData';
@@ -63,12 +63,12 @@ export default function Pricing() {
                     </div>
 
                     <div className="flex flex-wrap gap-1.5">
-                      {['Starter', 'Professional', 'Enterprise'].map((tier) => (
+                      {sol.plans.map((plan) => (
                         <span
-                          key={tier}
+                          key={plan.name}
                           className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-dark-100/70 dark:bg-dark-800 text-dark-500 dark:text-dark-400 border border-dark-200/60 dark:border-dark-700/60"
                         >
-                          {tier}
+                          {plan.name}
                         </span>
                       ))}
                     </div>

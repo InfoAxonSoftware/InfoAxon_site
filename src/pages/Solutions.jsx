@@ -95,7 +95,7 @@ export default function Solutions() {
 }
 
 const imageMap = {
-  erp:       '/images/solutions/erp-pos.jpg',
+  erp:       '/images/solutions/erp-pos/erp-pos.jpg',
   crm:       '/images/solutions/crm.jpg',
   ecommerce: '/images/solutions/ecommerce.jpg',
   mobile:    '/images/solutions/mobile-apps.jpg',

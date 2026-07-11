@@ -3,6 +3,8 @@ import { Toaster } from 'react-hot-toast'
 import { DataProvider } from './context/DataContext'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
+import { HardwareCartProvider } from './context/HardwareCartContext'
+import { CatalogProvider } from './context/CatalogContext'
 import ScrollToTop from './components/ScrollToTop'
 
 // Public pages
@@ -15,6 +17,11 @@ import ProjectDetail from './pages/ProjectDetail';
 import Contact from './pages/Contact'
 import Pricing from './pages/Pricing'
 import PricingDetail from './pages/PricingDetail'
+import PosHardware from './pages/PosHardware'
+import PosSetupBuilder from './pages/PosSetupBuilder'
+import HardwareCheckout from './pages/HardwareCheckout'
+import HardwareCart from './pages/HardwareCart'
+import BuildYourPos from './pages/BuildYourPos'
 
 // Admin pages
 import AdminLogin from './admin/AdminLogin'
@@ -25,6 +32,8 @@ import ManageProjects from './admin/ManageProjects'
 import SolutionForm from './admin/SolutionForm'
 import ProjectForm from './admin/ProjectForm'
 import ManageCompany from './admin/ManageCompany'
+import AdminResource from './admin/AdminResource'
+import AdminSettings from './admin/AdminSettings'
 
 // Layouts
 import PublicLayout from './components/PublicLayout'
@@ -48,6 +57,8 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <DataProvider>
+          <CatalogProvider>
+          <HardwareCartProvider>
           <ScrollToTop />
           <ThemedToaster />
         <Routes>
@@ -57,11 +68,18 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/solutions" element={<Solutions />} />
             <Route path="/solutions/:id" element={<SolutionDetail />} />
+            <Route path="/erp-pos" element={<SolutionDetail solutionId="custom-erp-pos" />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/pricing/:id" element={<PricingDetail />} />
+            <Route path="/build-your-pos" element={<BuildYourPos />} />
+            <Route path="/pos-hardware" element={<PosHardware />} />
+            <Route path="/pos-hardware/builder" element={<PosSetupBuilder />} />
+            <Route path="/pos-setup-builder" element={<PosSetupBuilder />} />
+            <Route path="/pos-hardware/cart" element={<HardwareCart />} />
+            <Route path="/pos-hardware/checkout" element={<HardwareCheckout />} />
           </Route>
 
           {/* Admin Routes */}
@@ -75,9 +93,13 @@ export default function App() {
             <Route path="projects/new" element={<ProjectForm />} />
             <Route path="projects/edit/:id" element={<ProjectForm />} />
             <Route path="company" element={<ManageCompany />} />
+            <Route path="manage/:resource" element={<AdminResource />} />
+            <Route path="settings" element={<AdminSettings />} />
           </Route>
         </Routes>
-      </DataProvider>
+          </HardwareCartProvider>
+          </CatalogProvider>
+        </DataProvider>
     </AuthProvider>
   </ThemeProvider>
   )

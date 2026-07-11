@@ -11,26 +11,39 @@ import {
 } from 'react-icons/hi';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import CompanyLogo from '../components/CompanyLogo';
 import toast from 'react-hot-toast';
 
 const sidebarLinks = [
-  { path: '/admin', label: 'Dashboard', icon: HiHome, end: true },
-  { path: '/admin/solutions', label: 'Solutions', icon: HiLightningBolt },
+  { path: '/admin', label: 'Overview', icon: HiHome, end: true },
+  { path: '/admin/manage/products', label: 'Hardware Products', icon: HiBriefcase },
+  { path: '/admin/manage/categories', label: 'Product Categories', icon: HiBriefcase },
+  { path: '/admin/manage/packages', label: 'Software Packages', icon: HiLightningBolt },
+  { path: '/admin/manage/features', label: 'Package Features', icon: HiLightningBolt },
+  { path: '/admin/manage/compatibility', label: 'Compatibility Rules', icon: HiLightningBolt },
+  { path: '/admin/manage/erp-features', label: 'ERP Key Features', icon: HiLightningBolt },
+  { path: '/admin/solutions', label: 'Website Solutions', icon: HiLightningBolt },
   { path: '/admin/projects', label: 'Projects', icon: HiBriefcase },
-  { path: '/admin/company', label: 'Company Info', icon: HiOfficeBuilding },
+  { path: '/admin/company', label: 'Company Information', icon: HiOfficeBuilding },
+  { path: '/admin/manage/inquiries', label: 'Contact Inquiries', icon: HiBriefcase },
+  { path: '/admin/manage/quotations', label: 'Quotation Requests', icon: HiBriefcase },
+  { path: '/admin/manage/settings', label: 'Website Settings', icon: HiOfficeBuilding },
+  { path: '/admin/settings', label: 'Admin Settings', icon: HiOfficeBuilding },
 ];
 
 export default function AdminLayout() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  if (loading) return <div className="min-h-screen bg-dark-950 grid place-items-center text-dark-300">Verifying session…</div>;
 
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
   }
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast.success('Logged out successfully');
     navigate('/admin/login');
   };
@@ -47,10 +60,8 @@ export default function AdminLayout() {
           {/* Logo */}
           <div className="p-6 border-b border-dark-800">
             <div className="flex items-center justify-between">
-              <Link to="/admin" className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center font-bold text-white">
-                  IA
-                </div>
+              <Link to="/admin" aria-label="InfoAxon admin dashboard" className="flex items-center gap-3">
+                <CompanyLogo className="h-10 max-w-[3rem] w-auto" loading="eager" />
                 <div>
                   <div className="text-white font-bold">InfoAxon</div>
                   <div className="text-dark-500 text-xs">Admin Panel</div>

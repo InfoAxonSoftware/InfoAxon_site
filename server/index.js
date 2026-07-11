@@ -1,0 +1,15 @@
+import path from 'node:path';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import { env } from './config/env.js';
+import authRoutes from './routes/auth.js';
+import publicRoutes from './routes/public.js';
+import adminRoutes from './routes/admin.js';
+import { errorHandler,notFound } from './middleware/error.js';
+const app=express();
+app.set('trust proxy',1);app.use(helmet({crossOriginResourcePolicy:{policy:'cross-origin'}}));app.use(cors({origin:env.clientUrl}));app.use(express.json({limit:'1mb'}));app.use(express.urlencoded({extended:false}));app.use(morgan(process.env.NODE_ENV==='production'?'combined':'dev'));app.use('/uploads',express.static(path.resolve('server/uploads')));app.get('/api/health',(req,res)=>res.json({status:'ok'}));
+const authLimiter=rateLimit({windowMs:900000,limit:10,standardHeaders:true,legacyHeaders:false,message:{message:'Too many attempts. Please try again later.'}});const formLimiter=rateLimit({windowMs:900000,limit:30,standardHeaders:true,legacyHeaders:false,message:{message:'Too many submissions. Please try again later.'}});
+app.use('/api/auth',authLimiter,authRoutes);app.use('/api/inquiries',formLimiter);app.use('/api/quotations',formLimiter);app.use('/api',publicRoutes);app.use('/api/admin',adminRoutes);app.use(notFound);app.use(errorHandler);app.listen(env.port,()=>console.log(`InfoAxon API listening on http://localhost:${env.port}`));

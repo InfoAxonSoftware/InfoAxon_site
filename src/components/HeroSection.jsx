@@ -50,21 +50,21 @@ export default function HeroSection() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 sm:py-28">
         <div className="grid lg:grid-cols-[1fr_1.05fr] gap-12 xl:gap-20 items-center">
 
           {/* ── Left Content ── */}
-          <motion.div variants={stagger} initial="hidden" animate="visible" className="flex flex-col gap-7">
+          <motion.div variants={stagger} initial="hidden" animate="visible" className="flex min-w-0 flex-col gap-5 sm:gap-7">
 
             {/* Badge */}
             <motion.div
               variants={fadeUp}
-              className="inline-flex self-start items-center gap-2 px-4 py-2 rounded-full
+              className="inline-flex self-start items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full
                          bg-primary-50 dark:bg-primary-500/10
                          border border-primary-200 dark:border-primary-500/20"
             >
               <span className="w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400 animate-pulse" />
-              <span className="text-primary-600 dark:text-primary-400 text-sm font-medium tracking-wide">
+              <span className="text-primary-600 dark:text-primary-400 text-xs sm:text-sm font-medium tracking-wide">
                 Welcome to InfoAxon
               </span>
             </motion.div>
@@ -72,7 +72,7 @@ export default function HeroSection() {
             {/* Headline */}
             <motion.h1
               variants={fadeUp}
-              className="text-[2.75rem] sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-extrabold leading-[1.1] tracking-tight text-dark-900 dark:text-white"
+              className="break-words text-[2.25rem] sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-extrabold leading-[1.08] sm:leading-[1.1] tracking-tight text-dark-900 dark:text-white"
             >
               Build Smarter<br />
               with{' '}
@@ -82,18 +82,18 @@ export default function HeroSection() {
             {/* Subtitle */}
             <motion.p
               variants={fadeUp}
-              className="text-dark-500 dark:text-dark-300 text-lg leading-relaxed max-w-[30rem]"
+              className="text-dark-500 dark:text-dark-300 text-base sm:text-lg leading-relaxed max-w-[30rem]"
             >
               {companyInfo.heroSubtitle}
             </motion.p>
 
             {/* CTA Buttons */}
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
-              <Link to="/contact" className="btn-primary text-base group">
+            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Link to="/contact" className="btn-primary w-full sm:w-auto justify-center px-5 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base group">
                 Start Your Project
                 <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/projects" className="btn-secondary text-base">
+              <Link to="/projects" className="btn-secondary w-full sm:w-auto justify-center px-5 py-3 sm:px-8 sm:py-3.5 text-sm sm:text-base">
                 <HiPlay />
                 View Our Work
               </Link>
@@ -102,7 +102,7 @@ export default function HeroSection() {
             {/* Stats */}
             <motion.div
               variants={fadeUp}
-              className="flex gap-10 pt-7 border-t border-dark-200/60 dark:border-dark-800/50"
+              className="grid grid-cols-3 gap-2 sm:flex sm:gap-10 pt-5 sm:pt-7 border-t border-dark-200/60 dark:border-dark-800/50"
             >
               {[
                 { value: companyInfo.stats.projects,       label: 'Projects Delivered' },
@@ -114,9 +114,10 @@ export default function HeroSection() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.9 + i * 0.12 }}
+                  className="min-w-0 text-center sm:text-left"
                 >
-                  <div className="text-2xl sm:text-3xl font-bold gradient-text">{stat.value}</div>
-                  <div className="text-dark-400 dark:text-dark-500 text-xs mt-1 whitespace-nowrap">{stat.label}</div>
+                  <div className="text-xl sm:text-3xl font-bold gradient-text">{stat.value}</div>
+                  <div className="break-words text-[10px] sm:text-xs leading-tight text-dark-400 dark:text-dark-500 mt-1">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
