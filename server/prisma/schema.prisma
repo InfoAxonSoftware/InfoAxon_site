@@ -20,7 +20,14 @@ enum RuleLevel {
 enum InquiryStatus {
   NEW
   READ
+  RESOLVED
   ARCHIVED
+}
+enum InquiryPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
 }
 enum QuotationStatus {
   NEW
@@ -60,6 +67,7 @@ model Product {
   shortDescription String
   fullDescription  String?   @db.Text
   specifications   Json?
+  compatibilityType String?
   price            Decimal   @db.Decimal(12, 2)
   warranty         String?
   stockQuantity    Int       @default(0)
@@ -69,6 +77,7 @@ model Product {
   enabled          Boolean   @default(true)
   displayOrder     Int       @default(0)
   rules            CompatibilityRule[] @relation("SuggestedProduct")
+  compatibilityRules CompatibilityRule[] @relation("RuleProduct")
   alternativeFor   CompatibilityAlternative[]
   quotationItems   QuotationItem[]
   createdAt        DateTime  @default(now())
@@ -77,6 +86,8 @@ model Product {
 
 model SoftwarePackage {
   id            String    @id @default(cuid())
+  solutionId    String?
+  solution      Solution? @relation(fields: [solutionId], references: [id], onDelete: Cascade)
   name          String    @unique
   slug          String    @unique
   startingPrice Decimal   @db.Decimal(12, 2)
@@ -100,6 +111,7 @@ model PackageFeature {
   package     SoftwarePackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
   text        String
   featured    Boolean @default(false)
+  enabled     Boolean @default(true)
   displayOrder Int @default(0)
 }
 
@@ -113,8 +125,11 @@ model PackageAddon {
 
 model CompatibilityRule {
   id                     String @id @default(cuid())
+  name                   String
   categoryId             String?
   category               ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  productId              String?
+  product                Product? @relation("RuleProduct", fields: [productId], references: [id], onDelete: Restrict)
   suggestedProductId     String?
   suggestedProduct       Product? @relation("SuggestedProduct", fields: [suggestedProductId], references: [id], onDelete: SetNull)
   level                  RuleLevel
@@ -138,11 +153,28 @@ model Solution {
   id String @id @default(cuid())
   slug String @unique
   title String
+  shortTitle String?
   subtitle String?
   description String @db.Text
   icon String?
   imageUrl String?
   content Json?
+  enabled Boolean @default(true)
+  displayOrder Int @default(0)
+  keyFeatures SolutionKeyFeature[]
+  packages SoftwarePackage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SolutionKeyFeature {
+  id String @id @default(cuid())
+  solutionId String
+  solution Solution @relation(fields: [solutionId], references: [id], onDelete: Cascade)
+  number String
+  title String
+  description String @db.Text
+  imageUrl String?
   enabled Boolean @default(true)
   displayOrder Int @default(0)
   createdAt DateTime @default(now())
@@ -181,6 +213,9 @@ model WebsiteSetting {
   id String @id @default(cuid())
   key String @unique
   value Json
+  type String @default("text")
+  enabled Boolean @default(true)
+  description String?
   updatedAt DateTime @updatedAt
 }
 
@@ -203,6 +238,7 @@ model ContactInquiry {
   inquiryType String
   message String @db.Text
   status InquiryStatus @default(NEW)
+  priority InquiryPriority @default(NORMAL)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

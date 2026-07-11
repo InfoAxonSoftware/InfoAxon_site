@@ -73,9 +73,8 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
   const location = useLocation();
   const { solutions } = useData();
-  const { itemCount, purchaseType, selectedPlanId } = useHardwareCart();
-  const cartCount =
-    itemCount + (purchaseType !== 'hardware' && selectedPlanId ? 1 : 0);
+  const { itemCount,purchaseType,selectedPlanId } = useHardwareCart();
+  const cartCount = itemCount + (purchaseType!=='hardware'&&selectedPlanId?1:0);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);

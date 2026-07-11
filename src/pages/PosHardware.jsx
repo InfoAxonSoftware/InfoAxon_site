@@ -10,7 +10,7 @@ const initial={search:'',category:'',minPrice:'',maxPrice:'',stock:'',featured:'
 export default function PosHardware(){
  const [cartOpen,setCartOpen]=useState(false),[filters,setFilters]=useState(initial),[filtersOpen,setFiltersOpen]=useState(false),[products,setProducts]=useState([]),[categories,setCategories]=useState([]),[pagination,setPagination]=useState({page:1,pages:1,total:0}),[loading,setLoading]=useState(true),[error,setError]=useState('');
  const {itemCount}=useHardwareCart();
- const load=()=>{setLoading(true);setError('');api.get('/products',{params:filters}).then(({data})=>{setProducts(data.items.map(p=>({...p,category:p.category.name,spec:p.shortDescription,image:p.imageUrl||'/images/solutions/erp-pos.jpg',inStock:p.stockQuantity>0,stockStatus:p.stockStatus.replaceAll('_',' ').toLowerCase()})));setPagination(data.pagination);}).catch(e=>setError(messageOf(e))).finally(()=>setLoading(false));};
+ const load=()=>{setLoading(true);setError('');api.get('/products',{params:filters}).then(({data})=>{setProducts(data.items.map(p=>({...p,category:p.category.name,spec:p.shortDescription,imageUrl:p.imageUrl||'/favicon.svg',price:Number(p.price),inStock:p.stockStatus!=='OUT_OF_STOCK'&&(p.stockQuantity>0||p.stockStatus==='TO_ORDER'),stockStatus:p.stockStatus.replaceAll('_',' ').toLowerCase(),compatibilityType:p.compatibilityType||p.category.slug})));setPagination(data.pagination);}).catch(e=>setError(messageOf(e))).finally(()=>setLoading(false));};
  useEffect(load,[filters]);
  useEffect(()=>{api.get('/categories').then(({data})=>setCategories(data));},[]);
  const update=(key,value)=>setFilters(f=>({...f,[key]:value,page:1}));

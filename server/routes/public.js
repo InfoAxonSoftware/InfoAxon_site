@@ -4,7 +4,7 @@ import { prisma } from '../config/prisma.js';
 import { validate } from '../validators/common.js';
 
 const router = Router();
-const productSelect = { id:true, name:true, slug:true, shortDescription:true, fullDescription:true, specifications:true, price:true, warranty:true, stockQuantity:true, stockStatus:true, imageUrl:true, featured:true, displayOrder:true, category:true };
+const productSelect = { id:true, name:true, slug:true, shortDescription:true, fullDescription:true, specifications:true, price:true, warranty:true, stockQuantity:true, stockStatus:true, imageUrl:true,compatibilityType:true, featured:true, displayOrder:true, category:true };
 router.get('/products', async (req, res) => {
   const page = Math.max(1, Number(req.query.page) || 1); const limit = Math.min(48, Math.max(1, Number(req.query.limit) || 12));
   const where = { enabled: true, ...(req.query.search && { name: { contains: String(req.query.search), mode:'insensitive' } }), ...(req.query.category && { category: { slug: String(req.query.category) } }), ...(req.query.featured === 'true' && { featured:true }) };
@@ -15,13 +15,15 @@ router.get('/products', async (req, res) => {
   res.json({ items, pagination:{ page, limit, total, pages:Math.ceil(total/limit) } });
 });
 router.get('/categories', async (req,res) => res.json(await prisma.productCategory.findMany({ where:{enabled:true}, orderBy:[{displayOrder:'asc'},{name:'asc'}] })));
-router.get('/software-packages', async (req,res) => res.json(await prisma.softwarePackage.findMany({ where:{enabled:true}, include:{features:{orderBy:{displayOrder:'asc'}},addons:{orderBy:{displayOrder:'asc'}}}, orderBy:{displayOrder:'asc'} })));
+router.get('/software-packages', async (req,res) => res.json(await prisma.softwarePackage.findMany({ where:{enabled:true,solution:{slug:'custom-erp-pos',enabled:true}}, include:{features:{where:{enabled:true},orderBy:{displayOrder:'asc'}},addons:{orderBy:{displayOrder:'asc'}}}, orderBy:{displayOrder:'asc'} })));
 router.get('/compatibility-rules', async (req,res) => res.json(await prisma.compatibilityRule.findMany({ where:{enabled:true}, include:{category:true,suggestedProduct:true,alternatives:{include:{product:true}}}, orderBy:{displayOrder:'asc'} })));
 router.get('/erp-key-features', async (req,res) => res.json(await prisma.erpKeyFeature.findMany({ where:{enabled:true}, orderBy:{displayOrder:'asc'} })));
-router.get('/solutions', async (req,res) => res.json(await prisma.solution.findMany({ where:{enabled:true}, orderBy:{displayOrder:'asc'} })));
+const solutionInclude={keyFeatures:{where:{enabled:true},orderBy:{displayOrder:'asc'}},packages:{where:{enabled:true},include:{features:{where:{enabled:true},orderBy:{displayOrder:'asc'}},addons:{orderBy:{displayOrder:'asc'}}},orderBy:{displayOrder:'asc'}}};
+router.get('/solutions', async (req,res) => res.json(await prisma.solution.findMany({ where:{enabled:true}, include:solutionInclude,orderBy:{displayOrder:'asc'} })));
+router.get('/solutions/:slug', async (req,res) => {const item=await prisma.solution.findFirst({where:{slug:req.params.slug,enabled:true},include:solutionInclude});item?res.json(item):res.status(404).json({message:'Solution not found'})});
 router.get('/projects', async (req,res) => res.json(await prisma.project.findMany({ where:{enabled:true}, orderBy:{displayOrder:'asc'} })));
 router.get('/company', async (req,res) => res.json(await prisma.companyInfo.findUnique({where:{id:'company'}})));
-router.get('/settings', async (req,res) => res.json(await prisma.websiteSetting.findMany()));
+router.get('/settings', async (req,res) => res.json(await prisma.websiteSetting.findMany({where:{enabled:true}})));
 
 const inquirySchema = z.object({ fullName:z.string().min(2).max(120), email:z.string().email(), inquiryType:z.string().min(2).max(80), message:z.string().min(2).max(5000) });
 router.post('/inquiries', validate(inquirySchema), async (req,res) => res.status(201).json(await prisma.contactInquiry.create({data:req.body})));

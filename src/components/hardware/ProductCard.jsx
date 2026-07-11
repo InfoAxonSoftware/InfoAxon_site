@@ -17,10 +17,11 @@ export default function ProductCard({ product }) {
     <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-dark-200/70 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-primary-300/70 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-900 dark:hover:border-primary-500/40">
       <div className="aspect-[4/3] overflow-hidden bg-dark-100 dark:bg-dark-800">
         <img
-          src={product.image}
+          src={product.imageUrl || '/favicon.svg'}
           alt={product.name}
           className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
           loading="lazy"
+          onError={(e)=>{e.currentTarget.src='/favicon.svg'}}
         />
       </div>
 

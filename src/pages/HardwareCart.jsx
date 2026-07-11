@@ -1,14 +1,11 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiMinus, HiPlus, HiTrash } from 'react-icons/hi';
 import { useHardwareCart } from '../context/HardwareCartContext';
 import { formatLkr } from '../data/hardwareData';
-import { pricingSolutions } from '../data/pricingData';
-import CompatibilityChecker from '../components/hardware/CompatibilityChecker';
+import { useCatalog } from '../context/CatalogContext';
 
 export default function HardwareCart() {
   const navigate = useNavigate();
-  const [checkerOpen, setCheckerOpen] = useState(false);
   const {
     cartItems,
     subtotal,
@@ -16,9 +13,9 @@ export default function HardwareCart() {
     removeItem,
     purchaseType,
     selectedPlanId,
+    clearCart,
   } = useHardwareCart();
-  const plans =
-    pricingSolutions.find((solution) => solution.id === 'erp')?.plans || [];
+  const {packages:plans}=useCatalog();
   const selectedPlan = plans.find((plan) => plan.id === selectedPlanId);
   const showSoftware = purchaseType !== 'hardware' && selectedPlan;
   const showHardware = purchaseType !== 'software';
@@ -26,19 +23,9 @@ export default function HardwareCart() {
     ? Number(selectedPlan.price.replace(/,/g, ''))
     : 0;
   const total = softwarePrice + (showHardware ? subtotal : 0);
+  const canCheckout=Boolean(selectedPlan||cartItems.length);
 
-  const startCheckout = () => {
-    if (showHardware) {
-      setCheckerOpen(true);
-      return;
-    }
-    navigate('/pos-hardware/checkout');
-  };
-
-  const proceedAfterCheck = () => {
-    setCheckerOpen(false);
-    navigate('/pos-hardware/checkout');
-  };
+  const startCheckout = () => {if(canCheckout)navigate('/pos-hardware/checkout')};
 
   return (
     <>
@@ -48,6 +35,7 @@ export default function HardwareCart() {
           <h1 className="section-title mt-3">
             Your POS <span className="gradient-text">Cart</span>
           </h1>
+          {(cartItems.length>0||selectedPlan)&&<div className="mt-5 flex justify-end"><button type="button" onClick={()=>confirm('Clear the selected software plan and all hardware items?')&&clearCart()} className="admin-btn-danger flex w-full items-center justify-center gap-2 sm:w-auto"><HiTrash/>Clear Cart</button></div>}
 
           {showSoftware && (
             <section className="mt-10 rounded-2xl border border-primary-200/70 bg-primary-50/70 p-5 dark:border-primary-500/20 dark:bg-primary-500/10 sm:p-6">
@@ -172,8 +160,9 @@ export default function HardwareCart() {
               </Link>
               <button
                 type="button"
+                disabled={!canCheckout}
                 onClick={startCheckout}
-                className="btn-primary justify-center"
+                className="btn-primary justify-center disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Proceed to Quotation Checkout
               </button>
@@ -182,11 +171,6 @@ export default function HardwareCart() {
         </div>
       </main>
 
-      <CompatibilityChecker
-        open={checkerOpen}
-        onClose={() => setCheckerOpen(false)}
-        onProceed={proceedAfterCheck}
-      />
     </>
   );
 }

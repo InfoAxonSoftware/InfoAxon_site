@@ -2,28 +2,30 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiShoppingCart } from 'react-icons/hi';
-import { pricingSolutions } from '../data/pricingData';
-import { hardwareProducts, formatLkr } from '../data/hardwareData';
+import { useCatalog } from '../context/CatalogContext';
+import { formatLkr } from '../data/hardwareData';
 import { useHardwareCart } from '../context/HardwareCartContext';
 import ProductCard from '../components/hardware/ProductCard';
 import PurchaseOptions from '../components/hardware/PurchaseOptions';
 import CartDrawer from '../components/hardware/CartDrawer';
-import CompatibilityChecker from '../components/hardware/CompatibilityChecker';
 
 export default function PosSetupBuilder() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [cartOpen, setCartOpen] = useState(false);
-  const { itemCount, subtotal } = useHardwareCart();
-  const plans = pricingSolutions.find((solution) => solution.id === 'erp')?.plans || [];
+  const { itemCount, subtotal,selectedPlanId,setSelectedPlanId } = useHardwareCart();
+  const {packages:plans,products:hardwareProducts}=useCatalog();
   const requestedPlan = searchParams.get('plan');
-  const selectedPlan = plans.find((plan) => plan.id === requestedPlan) || plans[0];
+  const selectedPlan = plans.find((plan) => plan.id === (requestedPlan||selectedPlanId)) || null;
 
   const choosePlan = (planId) => {
-    setSearchParams({ plan: planId });
+    const next=selectedPlan?.id===planId?null:planId;
+    setSelectedPlanId(next);
+    setSearchParams(next?{ plan: next }:{});
   };
 
   const softwarePrice = Number(selectedPlan?.price?.replace(/,/g, '')) || 0;
   const checkoutUrl = `/pos-hardware/checkout?mode=complete&plan=${selectedPlan?.id || ''}`;
+  const canCheckout=Boolean(selectedPlan||itemCount);
 
   return (
     <>
@@ -60,7 +62,7 @@ export default function PosSetupBuilder() {
               const selected = selectedPlan?.id === plan.id;
               const returnPath = '/pos-hardware/builder?plan=' + plan.id;
               const detailsUrl =
-                '/erp-pos?returnTo=' +
+                '/solutions/custom-erp-pos?returnTo=' +
                 encodeURIComponent(returnPath) +
                 '#plan-' +
                 plan.id;
@@ -123,14 +125,12 @@ export default function PosSetupBuilder() {
           </div>
         </section>
 
-        <CompatibilityChecker />
-
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 rounded-2xl bg-dark-900 p-6 text-white sm:flex-row dark:bg-dark-800">
           <div>
             <div className="text-sm text-dark-300">Estimated software + hardware total</div>
             <div className="mt-1 text-2xl font-extrabold">{formatLkr(softwarePrice + subtotal)}</div>
           </div>
-          <Link to={checkoutUrl} className="btn-primary w-full justify-center sm:w-auto">Proceed to Checkout</Link>
+          {canCheckout?<Link to={checkoutUrl} className="btn-primary w-full justify-center sm:w-auto">Proceed to Checkout</Link>:<button type="button" disabled className="btn-primary w-full justify-center opacity-50 sm:w-auto">Select software or hardware first</button>}
         </div>
       </main>
 
@@ -139,6 +139,7 @@ export default function PosSetupBuilder() {
         onClose={() => setCartOpen(false)}
         checkoutUrl={checkoutUrl}
         estimatedTotal={softwarePrice + subtotal}
+        canCheckout={canCheckout}
       />
     </>
   );

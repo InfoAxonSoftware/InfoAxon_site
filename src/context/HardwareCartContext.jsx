@@ -1,18 +1,20 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { hardwareProducts } from '../data/hardwareData';
+import {useCatalog} from './CatalogContext';
 
 const HardwareCartContext = createContext(null);
 const STORAGE_KEY = 'infoaxon_pos_builder';
 const LEGACY_CART_KEY = 'infoaxon_hardware_cart';
+const STATE_VERSION = 2;
 
 function loadBuilderState() {
   try {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (stored && Array.isArray(stored.items)) {
       return {
+        version: STATE_VERSION,
         items: stored.items,
         purchaseType: stored.purchaseType || 'complete',
-        selectedPlanId: stored.selectedPlanId || 'erp-starter',
+        selectedPlanId: stored.version === STATE_VERSION && typeof stored.selectedPlanId === 'string' ? stored.selectedPlanId : null,
       };
     }
 
@@ -20,20 +22,23 @@ function loadBuilderState() {
       localStorage.getItem(LEGACY_CART_KEY) || '[]'
     );
     return {
+      version: STATE_VERSION,
       items: Array.isArray(legacyItems) ? legacyItems : [],
       purchaseType: 'complete',
-      selectedPlanId: 'erp-starter',
+      selectedPlanId: null,
     };
   } catch {
     return {
+      version: STATE_VERSION,
       items: [],
       purchaseType: 'complete',
-      selectedPlanId: 'erp-starter',
+      selectedPlanId: null,
     };
   }
 }
 
 export function HardwareCartProvider({ children }) {
+  const {products:hardwareProducts}=useCatalog();
   const [builderState, setBuilderState] = useState(loadBuilderState);
   const { items, purchaseType, selectedPlanId } = builderState;
 
@@ -86,7 +91,7 @@ export function HardwareCartProvider({ children }) {
   };
 
   const clearCart = () => {
-    setBuilderState((current) => ({ ...current, items: [] }));
+    setBuilderState((current) => ({ ...current, items: [], selectedPlanId: null }));
   };
 
   const cartItems = useMemo(

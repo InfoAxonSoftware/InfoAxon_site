@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { HiSave } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { useData } from '../context/DataContext';
+import { errorDetails } from '../lib/api';
 
 export default function ManageCompany() {
   const { companyInfo, updateCompanyInfo } = useData();
   const [form, setForm] = useState(() => JSON.parse(JSON.stringify(companyInfo)));
+  const [saving, setSaving] = useState(false);
 
   // Re-sync form when companyInfo changes externally (e.g., cross-tab sync or reset)
   useEffect(() => {
@@ -47,10 +49,17 @@ export default function ManageCompany() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    updateCompanyInfo(form);
-    toast.success('Company info updated successfully');
+    setSaving(true);
+    try {
+      await updateCompanyInfo(form);
+      toast.success('Company information saved');
+    } catch (error) {
+      toast.error(errorDetails(error).summary);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -183,6 +192,10 @@ export default function ManageCompany() {
                 className="admin-input"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-dark-300 mb-2">WhatsApp number</label>
+              <input name="whatsapp" value={form.whatsapp || ''} onChange={handleChange} className="admin-input" placeholder="+94 77 123 4567" />
+            </div>
           </div>
 
           <div>
@@ -298,9 +311,9 @@ export default function ManageCompany() {
 
         {/* Save */}
         <div className="flex justify-end">
-          <button type="submit" className="admin-btn-primary flex items-center gap-2 px-8">
+          <button type="submit" disabled={saving} className="admin-btn-primary flex items-center gap-2 px-8 disabled:cursor-wait disabled:opacity-60">
             <HiSave size={18} />
-            Save All Changes
+            {saving ? 'Saving…' : 'Save All Changes'}
           </button>
         </div>
       </form>

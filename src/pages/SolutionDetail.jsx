@@ -11,15 +11,6 @@ import {
   HiArrowRight,
 } from 'react-icons/hi';
 import { useData } from '../context/DataContext';
-import { pricingSolutions } from '../data/pricingData';
-
-const pricingIdMap = {
-  erp: 'erp',
-  crm: 'crm',
-  ecommerce: 'ecommerce',
-  mobile: 'mobile',
-  bespoke: 'custom',
-};
 
 const iconMap = {
   erp: HiOutlineCube,
@@ -104,16 +95,16 @@ const extraContent = {
 
 export default function SolutionDetail({ solutionId }) {
   const { id } = useParams();
-  const { solutions } = useData();
-  const solution = solutions.find((s) => s.id === id);
+  const { solutions,loading } = useData();
+  const solution = solutions.find((s) => s.id === (solutionId||id));
 
+  if (loading) return <div className="min-h-screen pt-32 text-center text-dark-400">Loading solution…</div>;
   if (!solution) return <Navigate to="/solutions" replace />;
 
   const Icon = iconMap[solution.icon] || HiOutlineCog;
-  const imageSrc = imageMap[solution.icon];
-  const extra = extraContent[solution.icon] || { highlights: [], useCases: [] };
-  const pricingId = pricingIdMap[solution.icon];
-  const pricingSol = pricingId ? pricingSolutions.find((s) => s.id === pricingId) : null;
+  const imageSrc = solution.imageUrl || imageMap[solution.icon];
+  const extra = {highlights:(solution.keyFeatures||[]).map(f=>({title:f.title,desc:f.description,image:f.imageUrl,number:f.number})),useCases:[]};
+  const pricingSol = solution.pricing;
   const requestedReturnPath = new URLSearchParams(location.search).get('returnTo');
   const returnTo = requestedReturnPath?.startsWith('/pos-hardware')
     ? requestedReturnPath
@@ -218,7 +209,7 @@ function FeatureSection({ solution, extra }) {
                 </div>
                 <div className="relative flex flex-1 flex-col px-5 pb-6">
                   <div className={'relative -mt-5 mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br text-sm font-black text-white shadow-lg ' + solution.color}>
-                    {String(index + 1).padStart(2, '0')}
+                    {highlight.number || String(index + 1).padStart(2, '0')}
                   </div>
                   <h3 className="text-base font-bold leading-snug text-dark-900 dark:text-white">
                     {highlight.title}
@@ -543,7 +534,7 @@ function PricingSection({ pricingSol, returnTo }) {
                       </div>
                     </details>
                   )}
-                  {pricingSol.id === 'erp' ? (
+                  {pricingSol.id === 'custom-erp-pos' ? (
                     <div className="mt-auto grid gap-3">
                       <Link to={contactUrl} className={plan.ctaStyle + ' w-full justify-center'}>
                         Choose Software Only

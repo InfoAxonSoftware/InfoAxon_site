@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiArrowRight, HiShoppingCart } from 'react-icons/hi';
@@ -6,7 +5,6 @@ import { useCatalog } from '../context/CatalogContext';
 import { formatLkr } from '../data/hardwareData';
 import { useHardwareCart } from '../context/HardwareCartContext';
 import ProductCard from '../components/hardware/ProductCard';
-import CompatibilityChecker from '../components/hardware/CompatibilityChecker';
 
 const options = [
   {
@@ -29,7 +27,6 @@ const options = [
 export default function BuildYourPos() {
   const navigate = useNavigate();
   const { products: hardwareProducts, packages: plans } = useCatalog();
-  const [checkerOpen, setCheckerOpen] = useState(false);
   const {
     purchaseType,
     selectedPlanId,
@@ -38,27 +35,16 @@ export default function BuildYourPos() {
     itemCount,
     subtotal,
   } = useHardwareCart();
-const selectedPlan =
-    plans.find((plan) => plan.id === selectedPlanId) || plans[0];
+  const selectedPlan = plans.find((plan) => plan.id === selectedPlanId) || null;
   const softwarePrice =
     purchaseType !== 'hardware' && selectedPlan
       ? Number(selectedPlan.price.replace(/,/g, ''))
       : 0;
   const showSoftware = purchaseType === 'software' || purchaseType === 'complete';
   const showHardware = purchaseType === 'hardware' || purchaseType === 'complete';
+  const canCheckout = Boolean((showSoftware&&selectedPlan)||(showHardware&&itemCount>0));
 
-  const startCheckout = () => {
-    if (showHardware) {
-      setCheckerOpen(true);
-      return;
-    }
-    navigate('/pos-hardware/checkout');
-  };
-
-  const proceedAfterCheck = () => {
-    setCheckerOpen(false);
-    navigate('/pos-hardware/checkout');
-  };
+  const startCheckout = () => {if(canCheckout)navigate('/pos-hardware/checkout')};
 
   return (
     <>
@@ -117,7 +103,7 @@ const selectedPlan =
               {plans.map((plan) => {
                 const selected = selectedPlan?.id === plan.id;
                 const detailsUrl =
-                  '/erp-pos?returnTo=' +
+                  '/solutions/custom-erp-pos?returnTo=' +
                   encodeURIComponent('/build-your-pos') +
                   '#plan-' +
                   plan.id;
@@ -138,8 +124,8 @@ const selectedPlan =
                           </li>
                         ))}
                       </ul>
-                      <button type="button" onClick={() => setSelectedPlanId(plan.id)} className={selected ? 'btn-secondary mt-5 w-full justify-center' : 'btn-primary mt-5 w-full justify-center'}>
-                        {selected ? 'Selected Plan' : 'Select This Plan'}
+                      <button type="button" onClick={() => setSelectedPlanId(selected?null:plan.id)} className={selected ? 'btn-secondary mt-5 w-full justify-center' : 'btn-primary mt-5 w-full justify-center'}>
+                        {selected ? 'Unselect Plan' : 'Select This Plan'}
                       </button>
                     </div>
                     <Link to={detailsUrl} className="group flex items-center justify-between border-t border-dark-200/70 px-5 py-3 text-sm font-semibold text-primary-600 dark:border-dark-700/50 dark:text-primary-400">
@@ -169,15 +155,15 @@ const selectedPlan =
           <div>
             <div className="text-sm text-dark-300">Estimated total</div>
             <div className="mt-1 text-2xl font-extrabold">{formatLkr(softwarePrice + (showHardware ? subtotal : 0))}</div>
-            <div className="mt-1 text-xs text-dark-400">{purchaseType === 'software' ? selectedPlan?.name : purchaseType === 'complete' ? `${selectedPlan?.name} + ${itemCount} hardware item(s)` : `${itemCount} hardware item(s)`}</div>
+            <div className="mt-1 text-xs text-dark-400">{purchaseType === 'software' ? (selectedPlan?.name||'No software selected') : purchaseType === 'complete' ? `${selectedPlan?.name||'No software selected'} + ${itemCount} hardware item(s)` : `${itemCount} hardware item(s)`}</div>
           </div>
-          <button type="button" onClick={startCheckout} className="btn-primary min-h-12 w-full justify-center sm:w-auto">
+          <button type="button" disabled={!canCheckout} onClick={startCheckout} className="btn-primary min-h-12 w-full justify-center disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
             Proceed to Quotation Checkout
           </button>
+          {!canCheckout&&<p className="text-center text-xs text-dark-400 sm:text-right">Select a software plan or add hardware to continue.</p>}
         </section>
       </main>
 
-      <CompatibilityChecker open={checkerOpen} onClose={() => setCheckerOpen(false)} onProceed={proceedAfterCheck} />
     </>
   );
 }

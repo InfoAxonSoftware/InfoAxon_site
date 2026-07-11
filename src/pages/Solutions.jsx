@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { pricingSolutions } from '../data/pricingData';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
@@ -21,13 +20,6 @@ const iconMap = {
   bespoke: HiOutlineCog,
 };
 
-const pricingIdMap = {
-  erp: 'erp',
-  crm: 'crm',
-  ecommerce: 'ecommerce',
-  mobile: 'mobile',
-  bespoke: 'custom',
-};
 
 export default function Solutions() {
   const { solutions } = useData();
@@ -103,7 +95,7 @@ const imageMap = {
 };
 
 function SolutionVisual({ solution, Icon }) {
-  const src = imageMap[solution.icon];
+  const src = solution.imageUrl || imageMap[solution.icon];
   if (src) {
     return (
       <img
@@ -128,8 +120,6 @@ function SolutionCard({ solution, index }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.15 });
   const Icon = iconMap[solution.icon] || HiOutlineCog;
   const isReversed = index % 2 === 1;
-  const pricingId = pricingIdMap[solution.icon];
-  const pricingSol = pricingId ? pricingSolutions.find((s) => s.id === pricingId) : null;
 
   return (
     <div id={solution.id} ref={ref} className="scroll-mt-24">

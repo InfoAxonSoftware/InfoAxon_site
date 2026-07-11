@@ -1,247 +1,34 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { HiArrowLeft, HiSave, HiPlus, HiX } from 'react-icons/hi';
+import {useEffect,useState} from 'react';
+import {Link,useNavigate,useParams} from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { useData } from '../context/DataContext';
-
-const colorOptions = [
-  { value: 'from-blue-500 to-cyan-500', label: 'Blue → Cyan' },
-  { value: 'from-purple-500 to-pink-500', label: 'Purple → Pink' },
-  { value: 'from-green-500 to-emerald-500', label: 'Green → Emerald' },
-  { value: 'from-orange-500 to-red-500', label: 'Orange → Red' },
-  { value: 'from-indigo-500 to-violet-500', label: 'Indigo → Violet' },
-];
-
-const iconOptions = [
-  { value: 'erp', label: 'ERP/Cube' },
-  { value: 'crm', label: 'CRM/Users' },
-  { value: 'ecommerce', label: 'E-Commerce/Cart' },
-  { value: 'mobile', label: 'Mobile/Phone' },
-  { value: 'bespoke', label: 'Custom Software/Cog' },
-];
-
-const emptyForm = {
-  title: '',
-  shortTitle: '',
-  description: '',
-  icon: 'bespoke',
-  color: 'from-blue-500 to-cyan-500',
-  features: [],
-};
-
-export default function SolutionForm() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { solutions, addSolution, updateSolution } = useData();
-  const isEdit = Boolean(id);
-
-  const [form, setForm] = useState(emptyForm);
-  const [newFeature, setNewFeature] = useState('');
-
-  useEffect(() => {
-    if (isEdit) {
-      const existing = solutions.find((s) => s.id === id);
-      if (existing) {
-        setForm(existing);
-      } else {
-        toast.error('Solution not found');
-        navigate('/admin/solutions');
-      }
-    }
-  }, [id, isEdit, solutions, navigate]);
-
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const addFeature = () => {
-    if (newFeature.trim()) {
-      setForm((prev) => ({
-        ...prev,
-        features: [...(prev.features || []), newFeature.trim()],
-      }));
-      setNewFeature('');
-    }
-  };
-
-  const removeFeature = (index) => {
-    setForm((prev) => ({
-      ...prev,
-      features: prev.features.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!form.title.trim() || !form.description.trim()) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
-    const slugId = form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-
-    if (isEdit) {
-      updateSolution(id, form);
-      toast.success('Solution updated successfully');
-    } else {
-      addSolution({ ...form, id: slugId });
-      toast.success('Solution created successfully');
-    }
-
-    navigate('/admin/solutions');
-  };
-
-  return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => navigate('/admin/solutions')}
-          className="admin-btn-secondary p-2"
-        >
-          <HiArrowLeft size={20} />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-white">
-            {isEdit ? 'Edit Solution' : 'New Solution'}
-          </h1>
-          <p className="text-dark-400 mt-1">
-            {isEdit ? 'Update this service offering' : 'Create a new service offering'}
-          </p>
-        </div>
-      </div>
-
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="admin-card space-y-6">
-        <div className="grid sm:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-dark-300 mb-2">
-              Title <span className="text-red-400">*</span>
-            </label>
-            <input
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              required
-              placeholder="e.g., Custom ERP & Smart POS Systems"
-              className="admin-input"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-dark-300 mb-2">Short Title</label>
-            <input
-              name="shortTitle"
-              value={form.shortTitle}
-              onChange={handleChange}
-              placeholder="e.g., ERP & POS"
-              className="admin-input"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-dark-300 mb-2">
-            Description <span className="text-red-400">*</span>
-          </label>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            required
-            rows={5}
-            placeholder="Describe this service..."
-            className="admin-textarea"
-          />
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-dark-300 mb-2">Icon</label>
-            <select
-              name="icon"
-              value={form.icon}
-              onChange={handleChange}
-              className="admin-input appearance-none"
-            >
-              {iconOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-dark-300 mb-2">Color Theme</label>
-            <select
-              name="color"
-              value={form.color}
-              onChange={handleChange}
-              className="admin-input appearance-none"
-            >
-              {colorOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Features */}
-        <div>
-          <label className="block text-sm font-medium text-dark-300 mb-2">Features</label>
-          <div className="flex gap-2 mb-3">
-            <input
-              value={newFeature}
-              onChange={(e) => setNewFeature(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
-              placeholder="Add a feature..."
-              className="admin-input flex-1"
-            />
-            <button
-              type="button"
-              onClick={addFeature}
-              className="admin-btn-secondary flex items-center gap-1 px-4"
-            >
-              <HiPlus size={18} />
-              Add
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {(form.features || []).map((feature, i) => (
-              <span
-                key={i}
-                className="px-3 py-1.5 rounded-full bg-dark-900 border border-dark-700 text-dark-300 text-sm flex items-center gap-2"
-              >
-                {feature}
-                <button
-                  type="button"
-                  onClick={() => removeFeature(i)}
-                  className="text-dark-500 hover:text-red-400 transition-colors"
-                >
-                  <HiX size={14} />
-                </button>
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-dark-700">
-          <button
-            type="button"
-            onClick={() => navigate('/admin/solutions')}
-            className="admin-btn-secondary"
-          >
-            Cancel
-          </button>
-          <button type="submit" className="admin-btn-primary flex items-center gap-2">
-            <HiSave size={18} />
-            {isEdit ? 'Update Solution' : 'Create Solution'}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+import {HiArrowLeft,HiPlus,HiTrash,HiChevronUp,HiChevronDown,HiUpload} from 'react-icons/hi';
+import {api,errorDetails} from '../lib/api';
+const empty={title:'',shortTitle:'',slug:'',description:'',icon:'bespoke',imageUrl:'',enabled:true,displayOrder:0,keyFeatures:[],packages:[]};
+const slugify=v=>v.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const move=(rows,i,d)=>{const n=i+d;if(n<0||n>=rows.length)return rows;const out=[...rows];[out[i],out[n]]=[out[n],out[i]];return out.map((x,k)=>({...x,displayOrder:k+1}))};
+const Input=({label,error,...props})=><label className="block text-sm text-dark-300"><span className="mb-2 block font-medium">{label}</span><input className="admin-input" {...props}/>{error?.map(x=><span className="mt-1 block text-xs text-red-400" key={x}>{x}</span>)}</label>;
+function ImageUpload({label,value,onChange}){
+ const [uploading,setUploading]=useState(false);
+ const upload=async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;setUploading(true);try{const body=new FormData();body.append('image',file);const response=await api.post('/admin/uploads',body,{headers:{'Content-Type':'multipart/form-data'}});onChange(response.data.imageUrl);toast.success('Image uploaded')}catch(error){toast.error(errorDetails(error).summary)}finally{setUploading(false)}};
+ return <div className="space-y-3"><span className="block text-sm font-medium text-dark-300">{label}</span>{value?<div className="relative overflow-hidden rounded-xl border border-dark-700 bg-dark-900"><img src={value} alt="" className="h-44 w-full object-cover"/><button type="button" onClick={()=>confirm('Remove this image from the solution?')&&onChange('')} className="absolute right-2 top-2 flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-lg"><HiTrash/>Remove image</button></div>:<div className="grid h-32 place-items-center rounded-xl border border-dashed border-dark-600 bg-dark-900 text-sm text-dark-500">No image selected</div>}<input className="admin-input" type="text" value={value||''} placeholder="Upload an image or paste an image URL" onChange={e=>onChange(e.target.value)}/><label className={'admin-btn-secondary flex cursor-pointer items-center justify-center gap-2 '+(uploading?'pointer-events-none opacity-60':'')}><HiUpload/>{uploading?'Uploading…':value?'Replace image':'Upload image'}<input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" disabled={uploading} onChange={upload}/></label><p className="text-xs text-dark-500">PNG, JPG, WebP, or a relative /uploads path. The image is saved when you save the solution.</p></div>
 }
+const Actions=({onUp,onDown,onDelete})=><div className="flex gap-1"><button type="button" className="admin-btn-secondary p-2" onClick={onUp}><HiChevronUp/></button><button type="button" className="admin-btn-secondary p-2" onClick={onDown}><HiChevronDown/></button><button type="button" className="admin-btn-danger p-2" onClick={onDelete}><HiTrash/></button></div>;
+export default function SolutionForm(){
+ const {id}=useParams(),navigate=useNavigate(),[form,setForm]=useState(empty),[tab,setTab]=useState('basic'),[loading,setLoading]=useState(Boolean(id)),[saving,setSaving]=useState(false),[errors,setErrors]=useState({});
+ useEffect(()=>{if(!id)return;api.get('/admin/solutions/'+id).then(r=>setForm(r.data)).catch(e=>{toast.error(errorDetails(e).summary);navigate('/admin/solutions')}).finally(()=>setLoading(false))},[id,navigate]);
+ const set=(k,v)=>setForm(f=>({...f,[k]:v,...(k==='title'&&!id&&!f.slug?{slug:slugify(v)}:{})}));
+ const patchRow=(group,i,k,v)=>set(group,form[group].map((x,n)=>n===i?{...x,[k]:v}:x));
+ const addFeature=()=>set('keyFeatures',[...form.keyFeatures,{number:String(form.keyFeatures.length+1).padStart(2,'0'),title:'',description:'',imageUrl:'',enabled:true,displayOrder:form.keyFeatures.length+1}]);
+ const addPackage=()=>{if(form.packages.length>=3)return toast.error('A solution supports up to 3 packages');set('packages',[...form.packages,{name:'',slug:'',startingPrice:0,suitableFor:'',summary:'',supportPeriod:'',licenceNote:'',mostPopular:false,enabled:true,displayOrder:form.packages.length+1,features:[],addons:[]}])};
+ const packagePatch=(i,k,v)=>set('packages',form.packages.map((x,n)=>n===i?{...x,[k]:v,...(k==='name'&&!x.slug?{slug:slugify(form.slug+'-'+v)}:{})}:x));
+ const childPatch=(pi,group,ci,k,v)=>packagePatch(pi,group,form.packages[pi][group].map((x,n)=>n===ci?{...x,[k]:v}:x));
+ const submit=async e=>{e.preventDefault();setSaving(true);setErrors({});try{const payload={title:form.title,shortTitle:form.shortTitle||null,slug:form.slug,description:form.description,icon:form.icon||null,imageUrl:form.imageUrl||null,enabled:form.enabled,displayOrder:form.displayOrder,keyFeatures:form.keyFeatures.map((x,i)=>({number:x.number,title:x.title,description:x.description,imageUrl:x.imageUrl||null,enabled:x.enabled,displayOrder:i+1})),packages:form.packages.map((p,i)=>({name:p.name,slug:p.slug,startingPrice:Number(p.startingPrice),suitableFor:p.suitableFor,summary:p.summary,supportPeriod:p.supportPeriod,licenceNote:p.licenceNote||null,mostPopular:p.mostPopular,enabled:p.enabled,displayOrder:i+1,features:p.features.map((x,n)=>({text:x.text,featured:x.featured,enabled:x.enabled,displayOrder:n+1})),addons:p.addons.map((x,n)=>({text:x.text,displayOrder:n+1}))}))};await api({url:'/admin/solutions'+(id?'/'+id:''),method:id?'put':'post',data:payload});toast.success(id?'Solution updated':'Solution created');navigate('/admin/solutions')}catch(e){const d=errorDetails(e);setErrors(d.fields);toast.error(d.summary)}finally{setSaving(false)}};
+ if(loading)return <div className="admin-card text-dark-400">Loading solution…</div>;
+ return <div className="mx-auto max-w-6xl space-y-5"><header className="flex items-center gap-4"><Link to="/admin/solutions" className="admin-btn-secondary p-3"><HiArrowLeft/></Link><div><h1 className="text-2xl font-bold text-white">{id?'Edit Solution':'Add New Solution'}</h1><p className="text-sm text-dark-400">Changes publish to the public website after saving.</p></div></header>
+ <form onSubmit={submit}><div className="mb-5 grid grid-cols-3 gap-2 rounded-xl bg-dark-900 p-2">{[['basic','Basic Information'],['features','Key Features'],['packages','Pricing Packages']].map(([k,l])=><button key={k} type="button" onClick={()=>setTab(k)} className={'rounded-lg px-2 py-3 text-xs font-semibold sm:text-sm '+(tab===k?'bg-primary-500 text-white':'text-dark-400 hover:bg-dark-800')}>{l}</button>)}</div>
+ {tab==='basic'&&<section className="admin-card grid gap-5 sm:grid-cols-2"><Input label="Solution name *" value={form.title} required onChange={e=>set('title',e.target.value)} error={errors.title}/><Input label="Short title" value={form.shortTitle||''} onChange={e=>set('shortTitle',e.target.value)}/><Input label="Slug *" value={form.slug} required pattern="[a-z0-9-]+" onChange={e=>set('slug',e.target.value)} error={errors.slug}/><Input label="Display order" type="number" min="0" value={form.displayOrder} onChange={e=>set('displayOrder',Number(e.target.value))}/><label className="sm:col-span-2 text-sm text-dark-300"><span className="mb-2 block font-medium">Description *</span><textarea className="admin-textarea" rows="6" required value={form.description} onChange={e=>set('description',e.target.value)}/></label><div className="sm:col-span-2 grid gap-5 sm:grid-cols-2"><ImageUpload label="Hero image" value={form.imageUrl} onChange={v=>set('imageUrl',v)}/><label className="flex min-h-14 items-center gap-3 rounded-lg border border-dark-700 bg-dark-900 px-4 text-dark-300"><input type="checkbox" checked={form.enabled} onChange={e=>set('enabled',e.target.checked)}/>Enabled</label></div></section>}
+ {tab==='features'&&<section className="space-y-4"><div className="flex justify-end"><button type="button" onClick={addFeature} className="admin-btn-primary flex items-center gap-2"><HiPlus/>Add key feature</button></div>{form.keyFeatures.map((row,i)=><article className="admin-card space-y-4" key={i}><div className="flex items-center justify-between"><h3 className="font-semibold text-white">Feature {i+1}</h3><Actions onUp={()=>set('keyFeatures',move(form.keyFeatures,i,-1))} onDown={()=>set('keyFeatures',move(form.keyFeatures,i,1))} onDelete={()=>confirm('Delete this key feature?')&&set('keyFeatures',form.keyFeatures.filter((_,n)=>n!==i))}/></div><div className="grid gap-4 sm:grid-cols-2"><Input label="Feature number *" value={row.number} required onChange={e=>patchRow('keyFeatures',i,'number',e.target.value)}/><Input label="Title *" value={row.title} required onChange={e=>patchRow('keyFeatures',i,'title',e.target.value)}/><ImageUpload label="Feature image" value={row.imageUrl} onChange={v=>patchRow('keyFeatures',i,'imageUrl',v)}/><label className="flex min-h-14 items-center gap-3 text-dark-300"><input type="checkbox" checked={row.enabled} onChange={e=>patchRow('keyFeatures',i,'enabled',e.target.checked)}/>Enabled</label><label className="sm:col-span-2 text-sm text-dark-300">Description *<textarea className="admin-textarea mt-2" rows="3" required value={row.description} onChange={e=>patchRow('keyFeatures',i,'description',e.target.value)}/></label></div></article>)}{!form.keyFeatures.length&&<div className="admin-card text-center text-dark-500">No key features yet.</div>}</section>}
+ {tab==='packages'&&<section className="space-y-5"><div className="flex items-center justify-between"><p className="text-sm text-dark-400">{form.packages.length}/3 packages</p><button type="button" onClick={addPackage} className="admin-btn-primary flex items-center gap-2"><HiPlus/>Add package</button></div>{form.packages.map((pkg,pi)=><article className="admin-card space-y-5" key={pi}><div className="flex items-center justify-between"><h3 className="text-lg font-semibold text-white">{pkg.name||'New package'}</h3><Actions onUp={()=>set('packages',move(form.packages,pi,-1))} onDown={()=>set('packages',move(form.packages,pi,1))} onDelete={()=>confirm('Delete this package and its features?')&&set('packages',form.packages.filter((_,n)=>n!==pi))}/></div><div className="grid gap-4 sm:grid-cols-2"><Input label="Package name *" required value={pkg.name} onChange={e=>packagePatch(pi,'name',e.target.value)}/><Input label="Slug *" required value={pkg.slug} onChange={e=>packagePatch(pi,'slug',e.target.value)}/><Input label="Starting price *" required type="number" min="0" value={pkg.startingPrice} onChange={e=>packagePatch(pi,'startingPrice',Number(e.target.value))}/><Input label="Suitable for *" required value={pkg.suitableFor} onChange={e=>packagePatch(pi,'suitableFor',e.target.value)}/><Input label="Support period *" required value={pkg.supportPeriod} onChange={e=>packagePatch(pi,'supportPeriod',e.target.value)}/><Input label="Licence note" value={pkg.licenceNote||''} onChange={e=>packagePatch(pi,'licenceNote',e.target.value)}/><label className="sm:col-span-2 text-sm text-dark-300">Short summary *<textarea required rows="3" className="admin-textarea mt-2" value={pkg.summary} onChange={e=>packagePatch(pi,'summary',e.target.value)}/></label><label className="flex items-center gap-2 text-dark-300"><input type="checkbox" checked={pkg.mostPopular} onChange={e=>packagePatch(pi,'mostPopular',e.target.checked)}/>Most Popular</label><label className="flex items-center gap-2 text-dark-300"><input type="checkbox" checked={pkg.enabled} onChange={e=>packagePatch(pi,'enabled',e.target.checked)}/>Enabled</label></div><ChildRows title="Package features" rows={pkg.features} featured onAdd={()=>packagePatch(pi,'features',[...pkg.features,{text:'',featured:false,enabled:true,displayOrder:pkg.features.length+1}])} onChange={(ci,k,v)=>childPatch(pi,'features',ci,k,v)} onMove={(ci,d)=>packagePatch(pi,'features',move(pkg.features,ci,d))} onDelete={ci=>confirm('Delete this package feature?')&&packagePatch(pi,'features',pkg.features.filter((_,n)=>n!==ci))}/><ChildRows title="Optional add-ons" rows={pkg.addons} onAdd={()=>packagePatch(pi,'addons',[...pkg.addons,{text:'',displayOrder:pkg.addons.length+1}])} onChange={(ci,k,v)=>childPatch(pi,'addons',ci,k,v)} onMove={(ci,d)=>packagePatch(pi,'addons',move(pkg.addons,ci,d))} onDelete={ci=>confirm('Delete this add-on?')&&packagePatch(pi,'addons',pkg.addons.filter((_,n)=>n!==ci))}/></article>)}</section>}
+ <div className="sticky bottom-3 mt-6 flex flex-col-reverse gap-3 rounded-xl border border-dark-700 bg-dark-900/95 p-3 backdrop-blur sm:flex-row sm:justify-end"><Link to="/admin/solutions" className="admin-btn-secondary text-center">Cancel</Link><button disabled={saving} className="admin-btn-primary disabled:opacity-50">{saving?'Saving…':'Save Solution'}</button></div></form></div>
+}
+function ChildRows({title,rows,featured,onAdd,onChange,onMove,onDelete}){return <section className="rounded-xl border border-dark-700 p-4"><div className="mb-3 flex items-center justify-between"><h4 className="font-semibold text-white">{title}</h4><button type="button" onClick={onAdd} className="admin-btn-secondary px-3 py-2 text-xs"><HiPlus className="inline"/> Add</button></div><div className="space-y-2">{rows.map((row,i)=><div key={i} className="grid gap-2 rounded-lg bg-dark-900 p-3 sm:grid-cols-[1fr_auto_auto]"><input required className="admin-input" value={row.text} placeholder="Feature text" onChange={e=>onChange(i,'text',e.target.value)}/>{featured&&<div className="flex flex-wrap items-center gap-3 text-xs text-dark-300"><label><input type="checkbox" checked={row.featured} onChange={e=>onChange(i,'featured',e.target.checked)}/> Highlighted</label><label><input type="checkbox" checked={row.enabled} onChange={e=>onChange(i,'enabled',e.target.checked)}/> Enabled</label></div>}<Actions onUp={()=>onMove(i,-1)} onDown={()=>onMove(i,1)} onDelete={()=>onDelete(i)}/></div>)}</div></section>}

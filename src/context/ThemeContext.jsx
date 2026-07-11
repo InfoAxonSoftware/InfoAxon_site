@@ -3,14 +3,15 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext();
 
 const THEME_KEY = 'infoaxon_theme';
+const THEME_VERSION_KEY = 'infoaxon_theme_version';
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     try {
       const stored = localStorage.getItem(THEME_KEY);
-      if (stored === 'light' || stored === 'dark') return stored;
+      if (localStorage.getItem(THEME_VERSION_KEY)==='2'&&(stored === 'light' || stored === 'dark')) return stored;
     } catch {}
-    return 'dark';
+    return 'light';
   });
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export function ThemeProvider({ children }) {
       root.classList.remove('dark');
     }
     localStorage.setItem(THEME_KEY, theme);
+    localStorage.setItem(THEME_VERSION_KEY, '2');
   }, [theme]);
 
   const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));

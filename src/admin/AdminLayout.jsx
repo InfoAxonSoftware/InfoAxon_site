@@ -16,18 +16,12 @@ import toast from 'react-hot-toast';
 
 const sidebarLinks = [
   { path: '/admin', label: 'Overview', icon: HiHome, end: true },
-  { path: '/admin/manage/products', label: 'Hardware Products', icon: HiBriefcase },
-  { path: '/admin/manage/categories', label: 'Product Categories', icon: HiBriefcase },
-  { path: '/admin/manage/packages', label: 'Software Packages', icon: HiLightningBolt },
-  { path: '/admin/manage/features', label: 'Package Features', icon: HiLightningBolt },
-  { path: '/admin/manage/compatibility', label: 'Compatibility Rules', icon: HiLightningBolt },
-  { path: '/admin/manage/erp-features', label: 'ERP Key Features', icon: HiLightningBolt },
-  { path: '/admin/solutions', label: 'Website Solutions', icon: HiLightningBolt },
+  { path: '/admin/solutions', label: 'Solutions', icon: HiLightningBolt },
+  { path: '/admin/hardware', label: 'Hardware Products', icon: HiBriefcase },
   { path: '/admin/projects', label: 'Projects', icon: HiBriefcase },
   { path: '/admin/company', label: 'Company Information', icon: HiOfficeBuilding },
-  { path: '/admin/manage/inquiries', label: 'Contact Inquiries', icon: HiBriefcase },
-  { path: '/admin/manage/quotations', label: 'Quotation Requests', icon: HiBriefcase },
-  { path: '/admin/manage/settings', label: 'Website Settings', icon: HiOfficeBuilding },
+  { path: '/admin/inquiries', label: 'Contact Inquiries', icon: HiBriefcase },
+  { path: '/admin/quotations', label: 'Quotation Requests', icon: HiBriefcase },
   { path: '/admin/settings', label: 'Admin Settings', icon: HiOfficeBuilding },
 ];
 
@@ -49,7 +43,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-950 flex">
+    <div className="dark min-h-screen bg-dark-950 text-white flex">
       {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-dark-900 border-r border-dark-800 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${

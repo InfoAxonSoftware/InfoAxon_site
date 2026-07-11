@@ -4,7 +4,7 @@ import { HiMinus, HiPlus, HiTrash, HiX } from 'react-icons/hi';
 import { formatLkr } from '../../data/hardwareData';
 import { useHardwareCart } from '../../context/HardwareCartContext';
 
-export default function CartDrawer({ open, onClose, checkoutUrl, estimatedTotal }) {
+export default function CartDrawer({ open, onClose, checkoutUrl, estimatedTotal,canCheckout }) {
   const { cartItems, subtotal, updateQuantity, removeItem } = useHardwareCart();
   const total = estimatedTotal ?? subtotal;
 
@@ -86,7 +86,7 @@ export default function CartDrawer({ open, onClose, checkoutUrl, estimatedTotal 
               <Link
                 to={checkoutUrl}
                 onClick={onClose}
-                className={`btn-primary w-full justify-center ${cartItems.length === 0 ? 'pointer-events-none opacity-50' : ''}`}
+                className={`btn-primary w-full justify-center ${!(canCheckout??cartItems.length>0) ? 'pointer-events-none opacity-50' : ''}`}
               >
                 Proceed to Checkout
               </Link>

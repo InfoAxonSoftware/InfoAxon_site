@@ -34,6 +34,10 @@ import ProjectForm from './admin/ProjectForm'
 import ManageCompany from './admin/ManageCompany'
 import AdminResource from './admin/AdminResource'
 import AdminSettings from './admin/AdminSettings'
+import ManageHardwareProducts from './admin/ManageHardwareProducts'
+import HardwareProductForm from './admin/HardwareProductForm'
+import ManageInquiries from './admin/ManageInquiries'
+import ManageQuotations from './admin/ManageQuotations'
 
 // Layouts
 import PublicLayout from './components/PublicLayout'
@@ -89,6 +93,11 @@ export default function App() {
             <Route path="solutions" element={<ManageSolutions />} />
             <Route path="solutions/new" element={<SolutionForm />} />
             <Route path="solutions/edit/:id" element={<SolutionForm />} />
+            <Route path="hardware" element={<ManageHardwareProducts />} />
+            <Route path="hardware/new" element={<HardwareProductForm />} />
+            <Route path="hardware/edit/:id" element={<HardwareProductForm />} />
+            <Route path="inquiries" element={<ManageInquiries />} />
+            <Route path="quotations" element={<ManageQuotations />} />
             <Route path="projects" element={<ManageProjects />} />
             <Route path="projects/new" element={<ProjectForm />} />
             <Route path="projects/edit/:id" element={<ProjectForm />} />

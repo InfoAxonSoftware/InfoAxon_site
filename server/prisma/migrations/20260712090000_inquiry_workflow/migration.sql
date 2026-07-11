@@ -1,0 +1,3 @@
+ALTER TYPE "InquiryStatus" ADD VALUE IF NOT EXISTS 'RESOLVED';
+CREATE TYPE "InquiryPriority" AS ENUM ('LOW','NORMAL','HIGH','URGENT');
+ALTER TABLE "ContactInquiry" ADD COLUMN "priority" "InquiryPriority" NOT NULL DEFAULT 'NORMAL';
