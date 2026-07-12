@@ -194,7 +194,7 @@ export default function ManageCompany() {
             </div>
             <div>
               <label className="block text-sm font-medium text-dark-300 mb-2">WhatsApp number</label>
-              <input name="whatsapp" value={form.whatsapp || ''} onChange={handleChange} className="admin-input" placeholder="+94 77 123 4567" />
+              <input name="whatsapp" value={form.whatsapp || ''} onChange={handleChange} className="admin-input" placeholder="+94 71 147 4064" />
             </div>
           </div>
 

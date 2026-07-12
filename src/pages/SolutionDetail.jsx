@@ -195,54 +195,31 @@ function FeatureSection({ solution, extra }) {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6 items-stretch">
           {extra.highlights.map((highlight, index) => (
-            isErp ? (
-              <motion.article
-                key={highlight.title}
-                initial={{ opacity: 0, y: 24 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.08, duration: 0.5 }}
-                className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-dark-200/70 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-300/70 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-900 dark:hover:border-primary-500/40"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden border-b border-dark-200/60 bg-dark-100 dark:border-dark-700/50 dark:bg-dark-800">
-                  <img
-                    src={highlight.image}
-                    alt={highlight.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                    loading="lazy"
-                  />
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+            <motion.article
+              key={highlight.title}
+              initial={{ opacity: 0, y: 24 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: index * 0.08, duration: 0.5 }}
+              className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-dark-200/70 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-300/70 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-900 dark:hover:border-primary-500/40"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden border-b border-dark-200/60 bg-dark-100 dark:border-dark-700/50 dark:bg-dark-800">
+                <img
+                  src={highlight.image || solution.imageUrl || imageMap[solution.icon] || '/favicon.svg'}
+                  alt={highlight.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  loading="lazy"
+                  onError={(event) => { event.currentTarget.src = solution.imageUrl || imageMap[solution.icon] || '/favicon.svg'; }}
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+              </div>
+              <div className="relative flex flex-1 flex-col px-5 pb-6">
+                <div className={'relative -mt-5 mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br text-sm font-black text-white shadow-lg ' + solution.color}>
+                  {highlight.number || String(index + 1).padStart(2, '0')}
                 </div>
-                <div className="relative flex flex-1 flex-col px-5 pb-6">
-                  <div className={'relative -mt-5 mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br text-sm font-black text-white shadow-lg ' + solution.color}>
-                    {highlight.number || String(index + 1).padStart(2, '0')}
-                  </div>
-                  <h3 className="text-base font-bold leading-snug text-dark-900 dark:text-white">
-                    {highlight.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-dark-500 dark:text-dark-400">
-                    {highlight.desc}
-                  </p>
-                </div>
-              </motion.article>
-            ) : (
-              <motion.div
-                key={highlight.title}
-                initial={{ opacity: 0, y: 24 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.08, duration: 0.5 }}
-                className="h-full bg-white dark:bg-dark-900 rounded-2xl border border-dark-200/60 dark:border-dark-700/50 p-6"
-              >
-                <div className="text-2xl font-black text-dark-200 dark:text-dark-700 mb-3">
-                  {String(index + 1).padStart(2, '0')}
-                </div>
-                <div className="font-semibold text-dark-900 dark:text-white text-sm mb-2">
-                  {highlight.title}
-                </div>
-                <div className="text-dark-400 dark:text-dark-500 text-xs leading-relaxed">
-                  {highlight.desc}
-                </div>
-              </motion.div>
-            )
+                <h3 className="text-base font-bold leading-snug text-dark-900 dark:text-white">{highlight.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-dark-500 dark:text-dark-400">{highlight.desc}</p>
+              </div>
+            </motion.article>
           ))}
         </div>
 

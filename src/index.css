@@ -29,6 +29,12 @@
     background-color: #020617;
     color: #f8fafc;
   }
+  
+  @media (min-width: 1024px) and (max-height: 800px) {
+  .hero-carousel-wrapper {
+    max-height: 460px;
+  }
+}
 
   /* Scrollbar – light */
   ::-webkit-scrollbar { width: 6px; }
@@ -301,4 +307,31 @@
   .animate-delay-500 { animation-delay: 500ms; }
   .animate-delay-700 { animation-delay: 700ms; }
   .animate-delay-1000 { animation-delay: 1000ms; }
+}
+
+/* Keep the restored hero layout; only constrain its right panel on laptop viewports. */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .hero-carousel-wrapper {
+    height: min(500px, calc(100vh - 180px)) !important;
+    min-height: 0 !important;
+    aspect-ratio: auto;
+  }
+}@media (min-width: 1024px) and (max-width: 1439px) and (max-height: 820px) {
+  .hero-carousel-wrapper {
+    height: min(470px, calc(100vh - 280px)) !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .hero-advertisement-image {
+    height: 92%;
+    max-height: 92%;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) and (max-height: 820px) {
+  .hero-advertisement-image {
+    height: 90%;
+    max-height: 90%;
+  }
 }

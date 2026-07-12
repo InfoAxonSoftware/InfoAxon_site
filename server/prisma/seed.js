@@ -10,7 +10,8 @@ const plans=[
 async function main(){
   if(!process.env.INITIAL_ADMIN_PASSWORD)throw new Error('Set INITIAL_ADMIN_PASSWORD before running the seed');
   await prisma.adminUser.upsert({where:{username:'ADMIN'},update:{},create:{username:'ADMIN',passwordHash:await bcrypt.hash(process.env.INITIAL_ADMIN_PASSWORD,12)}});
-  await prisma.companyInfo.upsert({where:{id:'company'},update:{content:defaultCompanyInfo},create:{id:'company',name:defaultCompanyInfo.name||'InfoAxon Software Solutions',phone:defaultCompanyInfo.phone,whatsapp:'94711474064',email:defaultCompanyInfo.email,address:defaultCompanyInfo.address,socialLinks:defaultCompanyInfo.socialLinks,content:defaultCompanyInfo}});
+  const {name,phone,whatsapp,email,address,socialLinks,...companyContent}=defaultCompanyInfo;
+  await prisma.companyInfo.upsert({where:{id:'company'},update:{name,phone,whatsapp,email,address,socialLinks,content:companyContent},create:{id:'company',name,phone,whatsapp,email,address,socialLinks,content:companyContent}});
   for(let i=0;i<defaultSolutions.length;i++){const s=defaultSolutions[i],slug=s.id||('solution-'+i);await prisma.solution.upsert({where:{slug},update:{title:s.title,description:s.description||s.shortDescription||s.title,content:s},create:{slug,title:s.title,subtitle:s.subtitle||s.tagline,description:s.description||s.shortDescription||s.title,icon:typeof s.icon==='string'?s.icon:null,imageUrl:s.image,content:s,displayOrder:i+1}});}
   for(let i=0;i<defaultProjects.length;i++){const p=defaultProjects[i],slug=p.id||('project-'+i);await prisma.project.upsert({where:{slug},update:{title:p.title,description:p.description||p.title,content:p},create:{slug,title:p.title,category:p.category,description:p.description||p.title,imageUrl:p.image,content:p,featured:Boolean(p.featured),displayOrder:i+1}});}
   const erpSolution=await prisma.solution.findUnique({where:{slug:'custom-erp-pos'}});

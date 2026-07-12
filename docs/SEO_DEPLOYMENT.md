@@ -7,7 +7,7 @@ Set `VITE_SITE_URL` to the single preferred HTTPS origin before building. Set `V
 ```nginx
 server {
  listen 443 ssl http2;
- server_name infoaxon.com;
+ server_name infoaxon.lk;
  root /var/www/infoaxon/dist;
  location /assets/ { try_files $uri =404; expires 1y; add_header Cache-Control "public, immutable"; }
  location /images/ { try_files $uri =404; expires 30d; }

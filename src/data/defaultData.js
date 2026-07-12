@@ -166,12 +166,13 @@ export const defaultProjects = [
   },
 ];
 export const defaultCompanyInfo = {
-  name: 'InfoAxon',
+  name: 'InfoAxon Software Solutions',
   tagline: 'Transforming Businesses Through Technology',
   heroTitle: 'Build Smarter with Innovative Technology',
   heroSubtitle: 'We craft custom digital solutions that empower businesses to achieve their highest potential through cutting-edge technology.',
-  email: 'info@infoaxon.com',
-  phone: '+94 77 123 4567',
+  email: 'infoaxon26@gmail.com',
+  phone: '071 147 4064',
+  whatsapp: '94711474064',
   address: 'Colombo, Sri Lanka',
   vision: 'To be the leading provider of transformative digital solutions, empowering businesses globally through innovation, reliability, and unparalleled technological expertise.',
   mission: 'To design, develop, and deploy tailored software systems that simplify complex business processes, enhance user experiences, and accelerate sustainable growth for our clients.',

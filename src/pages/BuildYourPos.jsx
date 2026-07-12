@@ -175,10 +175,12 @@ export default function BuildYourPos() {
             <div className="mt-1 text-2xl font-extrabold">{formatLkr(softwarePrice + (showHardware ? subtotal : 0))}</div>
             <div className="mt-1 text-xs text-dark-400">{selectedPurchaseType === 'software' ? (selectedPlan?.name||'No software selected') : selectedPurchaseType === 'complete' ? `${selectedPlan?.name||'No software selected'} + ${itemCount} hardware item(s)` : `${itemCount} hardware item(s)`}</div>
           </div>
-          <button type="button" disabled={!canCheckout} onClick={startCheckout} className="btn-primary min-h-12 w-full justify-center disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
-            Proceed to Quotation Checkout
-          </button>
-          {!canCheckout&&<p className="text-center text-xs text-dark-400 sm:text-right">Select a software plan or add hardware to continue.</p>}
+          <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:items-end">
+            <button type="button" disabled={!canCheckout} onClick={startCheckout} className="btn-primary min-h-12 w-full justify-center disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+              Proceed to Quotation Checkout
+            </button>
+            {!canCheckout&&<p className="text-center text-xs text-dark-400 sm:text-right">Select a software plan or add hardware to continue.</p>}
+          </div>
         </section>
       </main>
 
