@@ -9,16 +9,19 @@ import {
   HiX,
   HiExternalLink,
   HiPhotograph,
+  HiSearch,
 } from 'react-icons/hi';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import CompanyLogo from '../components/CompanyLogo';
 import toast from 'react-hot-toast';
+import SEO from '../components/SEO';
 
 const sidebarLinks = [
   { path: '/admin', label: 'Overview', icon: HiHome, end: true },
   { path: '/admin/solutions', label: 'Solutions', icon: HiLightningBolt },
   { path: '/admin/advertisements', label: 'Advertisements', icon: HiPhotograph },
+  { path: '/admin/seo', label: 'SEO Management', icon: HiSearch },
   { path: '/admin/hardware', label: 'Hardware Products', icon: HiBriefcase },
   { path: '/admin/projects', label: 'Projects', icon: HiBriefcase },
   { path: '/admin/company', label: 'Company Information', icon: HiOfficeBuilding },
@@ -46,6 +49,7 @@ export default function AdminLayout() {
 
   return (
     <div className="dark min-h-screen bg-dark-950 text-white flex">
+      <SEO title="InfoAxon Admin" description="Private InfoAxon administration area." robots="noindex, nofollow" />
       {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-dark-900 border-r border-dark-800 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${

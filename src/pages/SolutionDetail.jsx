@@ -12,6 +12,7 @@ import {
 } from 'react-icons/hi';
 import { useData } from '../context/DataContext';
 import { useHardwareCart } from '../context/HardwareCartContext';
+import SEO,{SITE_URL,breadcrumbSchema} from '../components/SEO';
 
 const iconMap = {
   erp: HiOutlineCube,
@@ -95,6 +96,7 @@ const extraContent = {
 };
 
 export default function SolutionDetail({ solutionId }) {
+  const location=useLocation();
   const { id } = useParams();
   const { solutions,loading } = useData();
   const solution = solutions.find((s) => s.id === (solutionId||id));
@@ -113,6 +115,8 @@ export default function SolutionDetail({ solutionId }) {
 
   return (
     <>
+      <SEO title={solution.seoTitle||`${solution.title} | InfoAxon Sri Lanka`} description={solution.seoDescription||solution.description.slice(0,160)} path={solution.canonicalPath||`/solutions/${solution.id}`} image={solution.ogImage||imageSrc} robots={solution.indexable===false?'noindex, nofollow':'index, follow'} jsonLd={[{'@context':'https://schema.org','@type':'Service',name:solution.title,description:solution.description,provider:{'@type':'Organization',name:'InfoAxon',url:SITE_URL},areaServed:'Sri Lanka'},breadcrumbSchema([{name:'Home',path:'/'},{name:'Solutions',path:'/solutions'},{name:solution.title,path:`/solutions/${solution.id}`}])]}/>
+      <SEO title={solution.seoTitle||`${solution.title} | InfoAxon Sri Lanka`} description={solution.seoDescription||solution.description.slice(0,160)} path={solution.canonicalPath||`/solutions/${solution.id}`} image={solution.ogImage||imageSrc} robots={solution.indexable===false?'noindex, nofollow':'index, follow'} jsonLd={[{'@context':'https://schema.org','@type':'Service',name:solution.title,description:solution.description,provider:{'@type':'Organization',name:'InfoAxon',url:SITE_URL},areaServed:'Sri Lanka'},breadcrumbSchema([{name:'Home',path:'/'},{name:'Solutions',path:'/solutions'},{name:solution.title,path:`/solutions/${solution.id}`}])]}/>
       {/* Hero */}
       <section className="relative pt-32 pb-20 min-h-[520px] flex items-end overflow-hidden bg-dark-50 dark:bg-dark-950">
         {/* Background image or gradient */}

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /pos-hardware/cart
+Disallow: /pos-hardware/checkout
+Disallow: /build-your-pos
+Sitemap: https://infoaxon.lk/sitemap.xml

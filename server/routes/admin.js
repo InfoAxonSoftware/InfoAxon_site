@@ -9,6 +9,7 @@ import adminProducts from './admin-products.js';
 import adminRequests from './admin-requests.js';
 import adminAdvertisements from './admin-advertisements.js';
 import adminProjects from './admin-projects.js';
+import adminSeo from './admin-seo.js';
 
 const router = Router();
 router.use(requireAdmin);
@@ -16,6 +17,7 @@ router.use('/solutions',adminSolutions);
 router.use('/products',adminProducts);
 router.use('/advertisements',adminAdvertisements);
 router.use('/projects',adminProjects);
+router.use('/seo',adminSeo);
 router.use(adminRequests);
 const text = (min=1,max=5000) => z.string().trim().min(min).max(max);
 const optionalText = (max=5000) => z.string().trim().max(max).nullable().optional().transform(v=>v||null);

@@ -53,7 +53,7 @@ export default function CartDrawer({ open, onClose, checkoutUrl, estimatedTotal,
                 cartItems.map(({ product, quantity }) => (
                   <div key={product.id} className="rounded-xl border border-dark-200/70 p-4 dark:border-dark-700/50">
                     <div className="flex gap-3">
-                      <img src={product.image} alt="" className="h-16 w-16 flex-shrink-0 rounded-lg object-cover" />
+                      <img src={product.imageUrl || '/favicon.svg'} alt={product.name} onError={e=>{e.currentTarget.src='/favicon.svg'}} className="h-16 w-16 flex-shrink-0 rounded-lg object-cover" />
                       <div className="min-w-0 flex-1">
                         <div className="font-semibold text-dark-900 dark:text-white">{product.name}</div>
                         <div className="mt-1 text-sm font-bold text-primary-600 dark:text-primary-400">{formatLkr(product.price)}</div>

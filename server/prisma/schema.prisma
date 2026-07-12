@@ -76,6 +76,11 @@ model Product {
   featured         Boolean   @default(false)
   enabled          Boolean   @default(true)
   displayOrder     Int       @default(0)
+  seoTitle         String?
+  seoDescription   String?
+  canonicalPath    String?
+  ogImage          String?
+  indexable        Boolean   @default(true)
   rules            CompatibilityRule[] @relation("SuggestedProduct")
   compatibilityRules CompatibilityRule[] @relation("RuleProduct")
   alternativeFor   CompatibilityAlternative[]
@@ -161,6 +166,11 @@ model Solution {
   content Json?
   enabled Boolean @default(true)
   displayOrder Int @default(0)
+  seoTitle String?
+  seoDescription String?
+  canonicalPath String?
+  ogImage String?
+  indexable Boolean @default(true)
   keyFeatures SolutionKeyFeature[]
   packages SoftwarePackage[]
   createdAt DateTime @default(now())
@@ -197,6 +207,11 @@ model Project {
   featured Boolean @default(false)
   enabled Boolean @default(true)
   displayOrder Int @default(0)
+  seoTitle String?
+  seoDescription String?
+  canonicalPath String?
+  ogImage String?
+  indexable Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -296,6 +311,11 @@ model Advertisement {
   positionX    String   @default("center")
   positionY    String   @default("center")
   durationSeconds Int   @default(6)
+  seoTitle      String?
+  seoDescription String?
+  canonicalPath String?
+  ogImage       String?
+  indexable     Boolean @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

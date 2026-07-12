@@ -69,8 +69,9 @@ export default function HardwareCart() {
                   className="flex flex-col gap-4 rounded-2xl border border-dark-200/70 bg-white p-4 dark:border-dark-700/50 dark:bg-dark-900 sm:flex-row sm:items-center"
                 >
                   <img
-                    src={product.image}
-                    alt=""
+                    src={product.imageUrl || '/favicon.svg'}
+                    alt={product.name}
+                    onError={e=>{e.currentTarget.src='/favicon.svg'}}
                     className="h-24 w-full rounded-xl object-cover sm:w-28"
                   />
                   <div className="min-w-0 flex-1">

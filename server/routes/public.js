@@ -4,7 +4,7 @@ import { prisma } from '../config/prisma.js';
 import { validate } from '../validators/common.js';
 
 const router = Router();
-const productSelect = { id:true, name:true, slug:true, shortDescription:true, fullDescription:true, specifications:true, price:true, warranty:true, stockQuantity:true, stockStatus:true, imageUrl:true,compatibilityType:true, featured:true, displayOrder:true, category:true };
+const productSelect = { id:true, name:true, slug:true, shortDescription:true, fullDescription:true, specifications:true, price:true, warranty:true, stockQuantity:true, stockStatus:true, imageUrl:true,compatibilityType:true, featured:true, displayOrder:true,seoTitle:true,seoDescription:true,canonicalPath:true,ogImage:true,indexable:true, category:true };
 router.get('/products', async (req, res) => {
   const page = Math.max(1, Number(req.query.page) || 1); const limit = Math.min(48, Math.max(1, Number(req.query.limit) || 12));
   const where = { enabled: true, ...(req.query.search && { name: { contains: String(req.query.search), mode:'insensitive' } }), ...(req.query.category && { category: { slug: String(req.query.category) } }), ...(req.query.featured === 'true' && { featured:true }) };
@@ -14,6 +14,7 @@ router.get('/products', async (req, res) => {
   const [items,total] = await Promise.all([prisma.product.findMany({ where, select:productSelect, orderBy, skip:(page-1)*limit, take:limit }), prisma.product.count({ where })]);
   res.json({ items, pagination:{ page, limit, total, pages:Math.ceil(total/limit) } });
 });
+router.get('/products/:slug',async(req,res)=>{const item=await prisma.product.findFirst({where:{slug:req.params.slug,enabled:true},select:productSelect});item?res.json(item):res.status(404).json({message:'Hardware product not found'})});
 router.get('/categories', async (req,res) => res.json(await prisma.productCategory.findMany({ where:{enabled:true}, orderBy:[{displayOrder:'asc'},{name:'asc'}] })));
 router.get('/software-packages', async (req,res) => res.json(await prisma.softwarePackage.findMany({ where:{enabled:true,solution:{slug:'custom-erp-pos',enabled:true}}, include:{features:{where:{enabled:true},orderBy:{displayOrder:'asc'}},addons:{orderBy:{displayOrder:'asc'}}}, orderBy:{displayOrder:'asc'} })));
 router.get('/compatibility-rules', async (req,res) => res.json(await prisma.compatibilityRule.findMany({ where:{enabled:true}, include:{category:true,suggestedProduct:true,alternatives:{include:{product:true}}}, orderBy:{displayOrder:'asc'} })));

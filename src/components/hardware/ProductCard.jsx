@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { HiCheck, HiMinus, HiPlus, HiShoppingCart } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { formatLkr } from '../../data/hardwareData';
@@ -65,7 +66,8 @@ export default function ProductCard({ product }) {
           </div>
         </div>
 
-        <div className="mt-auto flex items-center gap-3 pt-5">
+        <Link to={'/pos-hardware/'+product.slug} className="mt-auto pt-5 text-sm font-semibold text-primary-600 hover:underline dark:text-primary-400">View product details</Link>
+        <div className="flex items-center gap-3 pt-3">
           <div className="flex h-11 items-center rounded-full border border-dark-200 bg-dark-50 dark:border-dark-700 dark:bg-dark-800">
             <button
               type="button"

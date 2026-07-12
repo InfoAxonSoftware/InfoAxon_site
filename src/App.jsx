@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { DataProvider } from './context/DataContext'
 import { AuthProvider } from './context/AuthContext'
@@ -8,38 +9,10 @@ import { CatalogProvider } from './context/CatalogContext'
 import ScrollToTop from './components/ScrollToTop'
 
 // Public pages
-import Home from './pages/Home'
-import About from './pages/About'
-import Solutions from './pages/Solutions'
-import SolutionDetail from './pages/SolutionDetail'
-import Projects from './pages/Projects'
-import ProjectDetail from './pages/ProjectDetail';
-import Contact from './pages/Contact'
-import Pricing from './pages/Pricing'
-import PricingDetail from './pages/PricingDetail'
-import HardwareCheckout from './pages/HardwareCheckout'
-import HardwareCart from './pages/HardwareCart'
-import BuildYourPos from './pages/BuildYourPos'
+const Home=lazy(()=>import('./pages/Home')),About=lazy(()=>import('./pages/About')),Solutions=lazy(()=>import('./pages/Solutions')),SolutionDetail=lazy(()=>import('./pages/SolutionDetail')),Projects=lazy(()=>import('./pages/Projects')),ProjectDetail=lazy(()=>import('./pages/ProjectDetail')),Contact=lazy(()=>import('./pages/Contact')),Pricing=lazy(()=>import('./pages/Pricing')),PricingDetail=lazy(()=>import('./pages/PricingDetail')),HardwareCheckout=lazy(()=>import('./pages/HardwareCheckout')),HardwareCart=lazy(()=>import('./pages/HardwareCart')),BuildYourPos=lazy(()=>import('./pages/BuildYourPos')),SeoLandingPage=lazy(()=>import('./pages/SeoLandingPage')),ProductDetail=lazy(()=>import('./pages/ProductDetail')),NotFound=lazy(()=>import('./pages/NotFound'));
 
 // Admin pages
-import AdminLogin from './admin/AdminLogin'
-import AdminLayout from './admin/AdminLayout'
-import AdminDashboard from './admin/AdminDashboard'
-import ManageSolutions from './admin/ManageSolutions'
-import ManageProjects from './admin/ManageProjects'
-import SolutionForm from './admin/SolutionForm'
-import ProjectForm from './admin/ProjectForm'
-import ManageCompany from './admin/ManageCompany'
-import AdminResource from './admin/AdminResource'
-import AdminSettings from './admin/AdminSettings'
-import ManageHardwareProducts from './admin/ManageHardwareProducts'
-import HardwareProductForm from './admin/HardwareProductForm'
-import ManageInquiries from './admin/ManageInquiries'
-import ManageQuotations from './admin/ManageQuotations'
-import InquiryDetail from './admin/InquiryDetail'
-import QuotationDetail from './admin/QuotationDetail'
-import ManageAdvertisements from './admin/ManageAdvertisements'
-import AdvertisementForm from './admin/AdvertisementForm'
+const AdminLogin=lazy(()=>import('./admin/AdminLogin')),AdminLayout=lazy(()=>import('./admin/AdminLayout')),AdminDashboard=lazy(()=>import('./admin/AdminDashboard')),ManageSolutions=lazy(()=>import('./admin/ManageSolutions')),ManageProjects=lazy(()=>import('./admin/ManageProjects')),SolutionForm=lazy(()=>import('./admin/SolutionForm')),ProjectForm=lazy(()=>import('./admin/ProjectForm')),ManageCompany=lazy(()=>import('./admin/ManageCompany')),AdminResource=lazy(()=>import('./admin/AdminResource')),AdminSettings=lazy(()=>import('./admin/AdminSettings')),ManageHardwareProducts=lazy(()=>import('./admin/ManageHardwareProducts')),HardwareProductForm=lazy(()=>import('./admin/HardwareProductForm')),ManageInquiries=lazy(()=>import('./admin/ManageInquiries')),ManageQuotations=lazy(()=>import('./admin/ManageQuotations')),InquiryDetail=lazy(()=>import('./admin/InquiryDetail')),QuotationDetail=lazy(()=>import('./admin/QuotationDetail')),ManageAdvertisements=lazy(()=>import('./admin/ManageAdvertisements')),AdvertisementForm=lazy(()=>import('./admin/AdvertisementForm')),ManageSEO=lazy(()=>import('./admin/ManageSEO'));
 
 // Layouts
 import PublicLayout from './components/PublicLayout'
@@ -67,7 +40,7 @@ export default function App() {
           <HardwareCartProvider>
           <ScrollToTop />
           <ThemedToaster />
-        <Routes>
+        <Suspense fallback={<div className="grid min-h-screen place-items-center text-dark-500">Loading...</div>}><Routes>
           {/* Public Routes */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
@@ -81,11 +54,14 @@ export default function App() {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/pricing/:id" element={<PricingDetail />} />
             <Route path="/build-your-pos" element={<BuildYourPos />} />
+            {['pos-system-sri-lanka','erp-software-sri-lanka','mobile-app-development-sri-lanka','software-development-company-sri-lanka','web-development-sri-lanka','custom-software-development-sri-lanka','pos-hardware-sri-lanka'].map(slug=><Route key={slug} path={'/'+slug} element={<SeoLandingPage slug={slug}/>} />)}
+            <Route path="/pos-hardware/:slug" element={<ProductDetail />} />
             <Route path="/pos-hardware" element={<Navigate to="/build-your-pos?type=hardware" replace />} />
             <Route path="/pos-hardware/builder" element={<Navigate to="/build-your-pos?type=complete" replace />} />
             <Route path="/pos-setup-builder" element={<Navigate to="/build-your-pos?type=complete" replace />} />
             <Route path="/pos-hardware/cart" element={<HardwareCart />} />
             <Route path="/pos-hardware/checkout" element={<HardwareCheckout />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
 
           {/* Admin Routes */}
@@ -98,6 +74,7 @@ export default function App() {
             <Route path="advertisements" element={<ManageAdvertisements />} />
             <Route path="advertisements/new" element={<AdvertisementForm />} />
             <Route path="advertisements/edit/:id" element={<AdvertisementForm />} />
+            <Route path="seo" element={<ManageSEO />} />
             <Route path="hardware" element={<ManageHardwareProducts />} />
             <Route path="hardware/new" element={<HardwareProductForm />} />
             <Route path="hardware/edit/:id" element={<HardwareProductForm />} />
@@ -112,7 +89,7 @@ export default function App() {
             <Route path="manage/:resource" element={<AdminResource />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
-        </Routes>
+        </Routes></Suspense>
           </HardwareCartProvider>
           </CatalogProvider>
         </DataProvider>
