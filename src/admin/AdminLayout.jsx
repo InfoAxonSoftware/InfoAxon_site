@@ -8,6 +8,7 @@ import {
   HiMenuAlt2,
   HiX,
   HiExternalLink,
+  HiPhotograph,
 } from 'react-icons/hi';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +18,7 @@ import toast from 'react-hot-toast';
 const sidebarLinks = [
   { path: '/admin', label: 'Overview', icon: HiHome, end: true },
   { path: '/admin/solutions', label: 'Solutions', icon: HiLightningBolt },
+  { path: '/admin/advertisements', label: 'Advertisements', icon: HiPhotograph },
   { path: '/admin/hardware', label: 'Hardware Products', icon: HiBriefcase },
   { path: '/admin/projects', label: 'Projects', icon: HiBriefcase },
   { path: '/admin/company', label: 'Company Information', icon: HiOfficeBuilding },

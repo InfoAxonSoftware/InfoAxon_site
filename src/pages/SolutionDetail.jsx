@@ -11,6 +11,7 @@ import {
   HiArrowRight,
 } from 'react-icons/hi';
 import { useData } from '../context/DataContext';
+import { useHardwareCart } from '../context/HardwareCartContext';
 
 const iconMap = {
   erp: HiOutlineCube,
@@ -368,6 +369,7 @@ function HardwarePreviewSection() {
   );
 }
 function PricingSection({ pricingSol, returnTo }) {
+  const { purchaseType, setSelectedPlanId } = useHardwareCart();
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.08 });
 
   return (
@@ -535,17 +537,11 @@ function PricingSection({ pricingSol, returnTo }) {
                     </details>
                   )}
                   {pricingSol.id === 'custom-erp-pos' ? (
-                    <div className="mt-auto grid gap-3">
-                      <Link to={contactUrl} className={plan.ctaStyle + ' w-full justify-center'}>
-                        Choose Software Only
-                      </Link>
-                      <Link
-                        to={'/pos-hardware/builder?plan=' + plan.id}
-                        className="btn-secondary w-full justify-center px-5 text-center"
-                      >
-                        Build Complete POS Setup
-                      </Link>
-                    </div>
+                    <Link
+                      to={'/build-your-pos?type=' + (['software', 'hardware', 'complete'].includes(purchaseType) ? purchaseType : 'software')}
+                      onClick={() => setSelectedPlanId(plan.id)}
+                      className={plan.ctaStyle + ' mt-auto w-full justify-center'}
+                    >Choose Plan</Link>
                   ) : (
                     <Link to={contactUrl} className={plan.ctaStyle + ' w-full justify-center mt-auto'}>
                       {plan.cta}

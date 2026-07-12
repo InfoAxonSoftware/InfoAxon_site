@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { DataProvider } from './context/DataContext'
 import { AuthProvider } from './context/AuthContext'
@@ -17,8 +17,6 @@ import ProjectDetail from './pages/ProjectDetail';
 import Contact from './pages/Contact'
 import Pricing from './pages/Pricing'
 import PricingDetail from './pages/PricingDetail'
-import PosHardware from './pages/PosHardware'
-import PosSetupBuilder from './pages/PosSetupBuilder'
 import HardwareCheckout from './pages/HardwareCheckout'
 import HardwareCart from './pages/HardwareCart'
 import BuildYourPos from './pages/BuildYourPos'
@@ -38,6 +36,10 @@ import ManageHardwareProducts from './admin/ManageHardwareProducts'
 import HardwareProductForm from './admin/HardwareProductForm'
 import ManageInquiries from './admin/ManageInquiries'
 import ManageQuotations from './admin/ManageQuotations'
+import InquiryDetail from './admin/InquiryDetail'
+import QuotationDetail from './admin/QuotationDetail'
+import ManageAdvertisements from './admin/ManageAdvertisements'
+import AdvertisementForm from './admin/AdvertisementForm'
 
 // Layouts
 import PublicLayout from './components/PublicLayout'
@@ -79,9 +81,9 @@ export default function App() {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/pricing/:id" element={<PricingDetail />} />
             <Route path="/build-your-pos" element={<BuildYourPos />} />
-            <Route path="/pos-hardware" element={<PosHardware />} />
-            <Route path="/pos-hardware/builder" element={<PosSetupBuilder />} />
-            <Route path="/pos-setup-builder" element={<PosSetupBuilder />} />
+            <Route path="/pos-hardware" element={<Navigate to="/build-your-pos?type=hardware" replace />} />
+            <Route path="/pos-hardware/builder" element={<Navigate to="/build-your-pos?type=complete" replace />} />
+            <Route path="/pos-setup-builder" element={<Navigate to="/build-your-pos?type=complete" replace />} />
             <Route path="/pos-hardware/cart" element={<HardwareCart />} />
             <Route path="/pos-hardware/checkout" element={<HardwareCheckout />} />
           </Route>
@@ -93,11 +95,16 @@ export default function App() {
             <Route path="solutions" element={<ManageSolutions />} />
             <Route path="solutions/new" element={<SolutionForm />} />
             <Route path="solutions/edit/:id" element={<SolutionForm />} />
+            <Route path="advertisements" element={<ManageAdvertisements />} />
+            <Route path="advertisements/new" element={<AdvertisementForm />} />
+            <Route path="advertisements/edit/:id" element={<AdvertisementForm />} />
             <Route path="hardware" element={<ManageHardwareProducts />} />
             <Route path="hardware/new" element={<HardwareProductForm />} />
             <Route path="hardware/edit/:id" element={<HardwareProductForm />} />
             <Route path="inquiries" element={<ManageInquiries />} />
+            <Route path="inquiries/:id" element={<InquiryDetail />} />
             <Route path="quotations" element={<ManageQuotations />} />
+            <Route path="quotations/:id" element={<QuotationDetail />} />
             <Route path="projects" element={<ManageProjects />} />
             <Route path="projects/new" element={<ProjectForm />} />
             <Route path="projects/edit/:id" element={<ProjectForm />} />

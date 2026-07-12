@@ -7,11 +7,15 @@ import { validate } from '../validators/common.js';
 import adminSolutions from './admin-solutions.js';
 import adminProducts from './admin-products.js';
 import adminRequests from './admin-requests.js';
+import adminAdvertisements from './admin-advertisements.js';
+import adminProjects from './admin-projects.js';
 
 const router = Router();
 router.use(requireAdmin);
 router.use('/solutions',adminSolutions);
 router.use('/products',adminProducts);
+router.use('/advertisements',adminAdvertisements);
+router.use('/projects',adminProjects);
 router.use(adminRequests);
 const text = (min=1,max=5000) => z.string().trim().min(min).max(max);
 const optionalText = (max=5000) => z.string().trim().max(max).nullable().optional().transform(v=>v||null);
@@ -36,7 +40,7 @@ const schemas = {
   settings:z.object({key:text(1,160).regex(/^[A-Za-z0-9_.-]+$/),value:z.unknown(),type:z.enum(['text','number','boolean','JSON']),enabled:z.boolean().optional().default(true),description:optionalText(500)}).strict()
 };
 const companySchema=z.object({name:text(1,200),phone:optionalText(50),whatsapp:optionalText(50),email:z.union([z.string().trim().email(),z.literal(''),z.null()]).optional().transform(v=>v||null),address:optionalText(1000),socialLinks:z.record(z.string(),z.string().max(1000)).nullable().optional(),footerDetails:optionalText(2000),content:z.record(z.string(),z.unknown()).nullable().optional()}).strict();
-const mutable={projects:'project'};
+const mutable={};
 const includes={};
 const ordering={projects:{displayOrder:'asc'}};
 

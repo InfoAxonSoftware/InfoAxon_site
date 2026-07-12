@@ -188,6 +188,11 @@ model Project {
   category String?
   description String @db.Text
   imageUrl String?
+  client String?
+  demoUrl String?
+  technologies Json?
+  results Json?
+  images Json?
   content Json?
   featured Boolean @default(false)
   enabled Boolean @default(true)
@@ -273,4 +278,24 @@ model QuotationItem {
   quantity Int
   unitPrice Decimal @db.Decimal(12, 2)
   lineTotal Decimal @db.Decimal(12, 2)
+}
+
+model Advertisement {
+  id           String   @id @default(cuid())
+  title        String?
+  description  String?  @db.Text
+  badge        String?
+  imageUrl     String?
+  ctaText      String?
+  ctaLink      String?
+  enabled      Boolean  @default(true)
+  startDate    DateTime?
+  endDate      DateTime?
+  displayOrder Int      @default(0)
+  fitMode      String   @default("contain")
+  positionX    String   @default("center")
+  positionY    String   @default("center")
+  durationSeconds Int   @default(6)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

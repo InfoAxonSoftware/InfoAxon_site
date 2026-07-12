@@ -13,7 +13,7 @@ function loadBuilderState() {
       return {
         version: STATE_VERSION,
         items: stored.items,
-        purchaseType: stored.purchaseType || 'complete',
+        purchaseType: ['software', 'hardware', 'complete'].includes(stored.purchaseType) ? stored.purchaseType : 'software',
         selectedPlanId: stored.version === STATE_VERSION && typeof stored.selectedPlanId === 'string' ? stored.selectedPlanId : null,
       };
     }
@@ -24,14 +24,14 @@ function loadBuilderState() {
     return {
       version: STATE_VERSION,
       items: Array.isArray(legacyItems) ? legacyItems : [],
-      purchaseType: 'complete',
+      purchaseType: 'software',
       selectedPlanId: null,
     };
   } catch {
     return {
       version: STATE_VERSION,
       items: [],
-      purchaseType: 'complete',
+      purchaseType: 'software',
       selectedPlanId: null,
     };
   }
@@ -47,6 +47,7 @@ export function HardwareCartProvider({ children }) {
   }, [builderState]);
 
   const setPurchaseType = (value) => {
+    if (!['software', 'hardware', 'complete'].includes(value)) return;
     setBuilderState((current) => ({ ...current, purchaseType: value }));
   };
 

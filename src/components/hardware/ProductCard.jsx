@@ -1,15 +1,23 @@
-import { useState } from 'react';
-import { HiMinus, HiPlus, HiShoppingCart } from 'react-icons/hi';
+import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { HiCheck, HiMinus, HiPlus, HiShoppingCart } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import { formatLkr } from '../../data/hardwareData';
 import { useHardwareCart } from '../../context/HardwareCartContext';
 
 export default function ProductCard({ product }) {
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
+  const resetTimer = useRef(null);
   const { addItem } = useHardwareCart();
+
+  useEffect(() => () => clearTimeout(resetTimer.current), []);
 
   const handleAdd = () => {
     addItem(product.id, quantity);
+    setAdded(true);
+    clearTimeout(resetTimer.current);
+    resetTimer.current = setTimeout(() => setAdded(false), 1600);
     toast.success(`${product.name} added to your hardware cart.`);
   };
 
@@ -80,15 +88,20 @@ export default function ProductCard({ product }) {
             </button>
           </div>
 
-          <button
+          <motion.button
             type="button"
             onClick={handleAdd}
             disabled={!product.inStock}
-            className="btn-primary min-w-0 flex-1 justify-center px-4 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            animate={added ? { scale: [1, 0.96, 1.04, 1] } : { scale: 1 }}
+            transition={{ duration: 0.38 }}
+            className={`min-w-0 flex-1 justify-center rounded-full px-4 py-3 text-sm font-semibold text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${added ? 'flex items-center gap-2 bg-emerald-500 shadow-emerald-500/25' : 'btn-primary'}`}
+            aria-live="polite"
           >
-            <HiShoppingCart className="flex-shrink-0" />
-            <span>Add to Cart</span>
-          </button>
+            <motion.span key={added ? 'added' : 'cart'} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2">
+              {added ? <HiCheck className="flex-shrink-0" /> : <HiShoppingCart className="flex-shrink-0" />}
+              <span>{added ? `Added ${quantity}` : 'Add to Cart'}</span>
+            </motion.span>
+          </motion.button>
         </div>
       </div>
     </article>

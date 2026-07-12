@@ -1,0 +1,1 @@
+ALTER TABLE "Advertisement" ADD COLUMN "durationSeconds" INTEGER NOT NULL DEFAULT 6;

@@ -1,10 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiArrowRight, HiShoppingCart } from 'react-icons/hi';
 import { useCatalog } from '../context/CatalogContext';
 import { formatLkr } from '../data/hardwareData';
 import { useHardwareCart } from '../context/HardwareCartContext';
-import ProductCard from '../components/hardware/ProductCard';
+import HardwareCatalogue from '../components/hardware/HardwareCatalogue';
 
 const options = [
   {
@@ -26,7 +27,8 @@ const options = [
 
 export default function BuildYourPos() {
   const navigate = useNavigate();
-  const { products: hardwareProducts, packages: plans } = useCatalog();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { packages: plans } = useCatalog();
   const {
     purchaseType,
     selectedPlanId,
@@ -35,13 +37,31 @@ export default function BuildYourPos() {
     itemCount,
     subtotal,
   } = useHardwareCart();
+  const allowedTypes = ['software', 'hardware', 'complete'];
+  const requestedType = searchParams.get('type');
+  const [selectedPurchaseType, setSelectedPurchaseType] = useState(() => allowedTypes.includes(requestedType) ? requestedType : (allowedTypes.includes(purchaseType) ? purchaseType : 'software'));
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+    setPurchaseType(selectedPurchaseType);
+    if (requestedType !== selectedPurchaseType) setSearchParams({ type: selectedPurchaseType }, { replace: true });
+  }, []);
+  const handlePurchaseTypeChange = (type) => {
+    if (!allowedTypes.includes(type)) return;
+    setSelectedPurchaseType(type);
+    setPurchaseType(type);
+    const next = new URLSearchParams(searchParams);
+    next.set('type', type);
+    setSearchParams(next, { replace: true });
+  };
   const selectedPlan = plans.find((plan) => plan.id === selectedPlanId) || null;
   const softwarePrice =
-    purchaseType !== 'hardware' && selectedPlan
+    selectedPurchaseType !== 'hardware' && selectedPlan
       ? Number(selectedPlan.price.replace(/,/g, ''))
       : 0;
-  const showSoftware = purchaseType === 'software' || purchaseType === 'complete';
-  const showHardware = purchaseType === 'hardware' || purchaseType === 'complete';
+  const showSoftware = selectedPurchaseType === 'software' || selectedPurchaseType === 'complete';
+  const showHardware = selectedPurchaseType === 'hardware' || selectedPurchaseType === 'complete';
   const canCheckout = Boolean((showSoftware&&selectedPlan)||(showHardware&&itemCount>0));
 
   const startCheckout = () => {if(canCheckout)navigate('/pos-hardware/checkout')};
@@ -62,7 +82,7 @@ export default function BuildYourPos() {
                 </p>
               </div>
               <Link to="/pos-hardware/cart" className="btn-secondary self-start px-5 py-3 sm:self-auto">
-                <HiShoppingCart /> Cart ({itemCount})
+                <HiShoppingCart /> Cart ({itemCount + (showSoftware && selectedPlan ? 1 : 0)})
               </Link>
             </div>
           </motion.div>
@@ -76,16 +96,16 @@ export default function BuildYourPos() {
               <button
                 type="button"
                 key={option.id}
-                onClick={() => setPurchaseType(option.id)}
+                onClick={() => handlePurchaseTypeChange(option.id)}
                 className={`min-h-36 rounded-2xl border p-5 text-left transition-all ${
-                  purchaseType === option.id
+                  selectedPurchaseType === option.id
                     ? 'border-primary-400 bg-primary-50 ring-2 ring-primary-500/10 dark:border-primary-500/50 dark:bg-primary-500/10'
                     : 'border-dark-200/70 bg-white hover:-translate-y-0.5 hover:shadow-md dark:border-dark-700/50 dark:bg-dark-900'
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
                   <h2 className="font-bold text-dark-900 dark:text-white">{option.title}</h2>
-                  <span className={`h-3 w-3 rounded-full border ${purchaseType === option.id ? 'border-primary-500 bg-primary-500' : 'border-dark-300 dark:border-dark-600'}`} />
+                  <span className={`h-3 w-3 rounded-full border ${selectedPurchaseType === option.id ? 'border-primary-500 bg-primary-500' : 'border-dark-300 dark:border-dark-600'}`} />
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-dark-500 dark:text-dark-400">{option.description}</p>
               </button>
@@ -104,7 +124,7 @@ export default function BuildYourPos() {
                 const selected = selectedPlan?.id === plan.id;
                 const detailsUrl =
                   '/solutions/custom-erp-pos?returnTo=' +
-                  encodeURIComponent('/build-your-pos') +
+                  encodeURIComponent('/build-your-pos?type=' + selectedPurchaseType) +
                   '#plan-' +
                   plan.id;
 
@@ -125,7 +145,7 @@ export default function BuildYourPos() {
                         ))}
                       </ul>
                       <button type="button" onClick={() => setSelectedPlanId(selected?null:plan.id)} className={selected ? 'btn-secondary mt-5 w-full justify-center' : 'btn-primary mt-5 w-full justify-center'}>
-                        {selected ? 'Unselect Plan' : 'Select This Plan'}
+                        {selected ? 'Unselect Plan' : 'Choose Plan'}
                       </button>
                     </div>
                     <Link to={detailsUrl} className="group flex items-center justify-between border-t border-dark-200/70 px-5 py-3 text-sm font-semibold text-primary-600 dark:border-dark-700/50 dark:text-primary-400">
@@ -145,9 +165,7 @@ export default function BuildYourPos() {
               <h2 className="mt-2 text-2xl font-bold text-dark-900 dark:text-white">Choose Compatible Hardware</h2>
               <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">Compatibility is checked only when you proceed to checkout.</p>
             </div>
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {hardwareProducts.map((product) => <ProductCard key={product.id} product={product} />)}
-            </div>
+            <HardwareCatalogue />
           </section>
         )}
 
@@ -155,7 +173,7 @@ export default function BuildYourPos() {
           <div>
             <div className="text-sm text-dark-300">Estimated total</div>
             <div className="mt-1 text-2xl font-extrabold">{formatLkr(softwarePrice + (showHardware ? subtotal : 0))}</div>
-            <div className="mt-1 text-xs text-dark-400">{purchaseType === 'software' ? (selectedPlan?.name||'No software selected') : purchaseType === 'complete' ? `${selectedPlan?.name||'No software selected'} + ${itemCount} hardware item(s)` : `${itemCount} hardware item(s)`}</div>
+            <div className="mt-1 text-xs text-dark-400">{selectedPurchaseType === 'software' ? (selectedPlan?.name||'No software selected') : selectedPurchaseType === 'complete' ? `${selectedPlan?.name||'No software selected'} + ${itemCount} hardware item(s)` : `${itemCount} hardware item(s)`}</div>
           </div>
           <button type="button" disabled={!canCheckout} onClick={startCheckout} className="btn-primary min-h-12 w-full justify-center disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
             Proceed to Quotation Checkout

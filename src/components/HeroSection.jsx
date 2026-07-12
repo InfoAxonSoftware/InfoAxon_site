@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiArrowRight, HiPlay } from 'react-icons/hi';
 import { useData } from '../context/DataContext';
+import HeroAdvertisementCarousel from './HeroAdvertisementCarousel';
 
 const stagger = {
   hidden: {},
@@ -128,8 +129,10 @@ export default function HeroSection() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="hidden lg:flex flex-col gap-4"
+            className="flex min-w-0 self-stretch flex-col gap-4 [&>div]:lg:h-full [&>div]:lg:min-h-[580px] [&>div]:lg:aspect-auto"
           >
+            <HeroAdvertisementCarousel />
+            <div className="hidden">
             {/* Terminal card */}
             <div className="relative">
               {/* Ambient glow */}
@@ -211,6 +214,7 @@ export default function HeroSection() {
                   />
                 ))}
               </div>
+            </div>
             </div>
           </motion.div>
 

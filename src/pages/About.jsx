@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useData } from '../context/DataContext';
-import CompanyLogo from '../components/CompanyLogo';
 
 export default function About() {
   const { companyInfo } = useData();
@@ -65,12 +64,13 @@ function AboutContent() {
             transition={{ duration: 0.7 }}
           >
             <div className="relative">
-              <div className="aspect-video rounded-2xl overflow-hidden bg-dark-100 dark:bg-dark-800 border border-dark-200 dark:border-dark-700/50 flex items-center justify-center">
-                <div className="text-center p-8">
-                  <CompanyLogo className="h-20 max-w-full w-auto mx-auto mb-4" loading="lazy" />
-                  <div className="text-dark-400 text-lg">InfoAxon Technologies</div>
-                  <div className="text-dark-400 dark:text-dark-500 text-sm mt-2">Building Digital Futures</div>
-                </div>
+              <div className="aspect-video overflow-hidden rounded-2xl border border-dark-200 dark:border-dark-700/50">
+                <img
+                  src="/images/about/about.png"
+                  alt="InfoAxon technology solutions"
+                  className="h-full w-full object-cover object-center"
+                  loading="lazy"
+                />
               </div>
               {/* Decorative element */}
               <div className="absolute -bottom-4 -right-4 w-full h-full rounded-2xl border border-primary-400/20 dark:border-primary-500/20 -z-10" />
